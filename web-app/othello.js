@@ -245,6 +245,50 @@ function getValidMoves(game, player = game.currentPlayer) {
 }
 
 /**
+ * Chooses a move for the computer player.
+ *
+ * The computer uses a simple greedy strategy: it chooses the legal move that
+ * flips the greatest number of opponent discs. If there are no legal moves,
+ * null is returned.
+ *
+ * @param {GameState} game - The current game state.
+ * @param {Player} [player=game.currentPlayer] - The computer player.
+ * @returns {Position | null} The chosen move, or null if no move is available.
+ */
+function chooseComputerMove(game, player = game.currentPlayer) {
+    const validMoves = getValidMoves(game, player);
+
+    if (validMoves.length === 0) {
+        return null;
+    }
+
+    return validMoves.reduce(
+        function (bestMove, move) {
+            const bestScore = getFlippedDiscs(
+                game,
+                bestMove[0],
+                bestMove[1],
+                player
+            ).length;
+
+            const moveScore = getFlippedDiscs(
+                game,
+                move[0],
+                move[1],
+                player
+            ).length;
+
+            if (moveScore > bestScore) {
+                return move;
+            }
+
+            return bestMove;
+        },
+        validMoves[0]
+    );
+}
+
+/**
  * Plays a move for the current player.
  *
  * If the move is legal, this returns a new game state with the new disc placed,
@@ -402,5 +446,6 @@ export {
     passTurn,
     getScore,
     isGameOver,
-    getWinner
+    getWinner,
+    chooseComputerMove,
 };

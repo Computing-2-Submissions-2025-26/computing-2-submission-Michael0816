@@ -1,6 +1,7 @@
 import {
     BLACK,
     WHITE,
+    chooseComputerMove,
     createGame,
     getOpponent,
     getScore,
@@ -8,16 +9,25 @@ import {
     getWinner,
     isGameOver,
     isMoveLegal,
+    passTurn,
     playMove
 } from "./othello.js";
 
 let game = createGame(6);
+
+let gameMode = "pvp";
+let computerTurnPending = false;
+
+const COMPUTER_PLAYER = WHITE;
 
 const boardElement = document.querySelector("#board");
 const statusElement = document.querySelector("#status");
 const scoreElement = document.querySelector("#score");
 const messageElement = document.querySelector("#message");
 const resetButton = document.querySelector("#reset-button");
+
+const pvpButton = document.querySelector("#pvp-button");
+const pvcButton = document.querySelector("#pvc-button");
 
 function formatPlayer(player) {
     if (player === BLACK) {
@@ -43,6 +53,19 @@ function formatCellValue(value) {
     return "empty cell";
 }
 
+function updateModeButtons() {
+    pvpButton.classList.toggle("active-mode", gameMode === "pvp");
+    pvcButton.classList.toggle("active-mode", gameMode === "pvc");
+}
+
+function isComputerTurn() {
+    return (
+        gameMode === "pvc" &&
+        game.currentPlayer === COMPUTER_PLAYER &&
+        !isGameOver(game)
+    );
+}
+
 function updateStatus() {
     const score = getScore(game);
     const winner = getWinner(game);
@@ -58,9 +81,39 @@ function updateStatus() {
     }
 }
 
+function scheduleComputerTurn() {
+    if (!isComputerTurn() || computerTurnPending) {
+        return;
+    }
+
+    computerTurnPending = true;
+    messageElement.textContent = "Computer is thinking...";
+
+    setTimeout(function () {
+        const move = chooseComputerMove(game, COMPUTER_PLAYER);
+
+        if (move === null) {
+            game = passTurn(game);
+            messageElement.textContent = "Computer has no legal moves. Turn passed.";
+        } else {
+            game = playMove(game, move[0], move[1]);
+            messageElement.textContent = "Computer played a move.";
+        }
+
+        computerTurnPending = false;
+        render();
+        scheduleComputerTurn();
+    }, 500);
+}
+
 function handleCellClick(row, column) {
     if (isGameOver(game)) {
         messageElement.textContent = "The game is already over.";
+        return;
+    }
+
+    if (isComputerTurn()) {
+        messageElement.textContent = "Please wait for the computer move.";
         return;
     }
 
@@ -85,6 +138,7 @@ function handleCellClick(row, column) {
     }
 
     render();
+    scheduleComputerTurn();
 }
 
 function createCell(row, column) {
@@ -137,12 +191,29 @@ function renderBoard() {
 function render() {
     renderBoard();
     updateStatus();
+    updateModeButtons();
 }
+
+pvpButton.addEventListener("click", function () {
+    gameMode = "pvp";
+    game = createGame(6);
+    messageElement.textContent = "Player vs Player mode selected.";
+    render();
+});
+
+pvcButton.addEventListener("click", function () {
+    gameMode = "pvc";
+    game = createGame(6);
+    messageElement.textContent = "Player vs Computer mode selected. You are Black.";
+    render();
+    scheduleComputerTurn();
+});
 
 resetButton.addEventListener("click", function () {
     game = createGame(6);
     messageElement.textContent = "";
     render();
+    scheduleComputerTurn();
 });
 
 render();

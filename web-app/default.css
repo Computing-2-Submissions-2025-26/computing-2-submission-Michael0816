@@ -213,6 +213,35 @@ body {
     box-shadow: 0 0 0 5px rgba(255, 59, 59, 0.12);
 }
 
+.mode-controls {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 0.4rem;
+}
+
+.mode-button {
+    padding: 0.55rem 0.85rem;
+    border: 1px solid var(--border-soft);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-main);
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.mode-button:hover,
+.mode-button:focus {
+    outline: 3px solid var(--warning);
+    outline-offset: 2px;
+}
+
+.active-mode {
+    background: linear-gradient(135deg, var(--accent), #1ba96d);
+    color: #07110d;
+}
+
 #reset-button {
     padding: 0.8rem 1.25rem;
     border: 0;

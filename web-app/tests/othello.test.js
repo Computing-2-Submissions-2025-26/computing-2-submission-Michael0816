@@ -14,7 +14,8 @@ import {
     passTurn,
     getScore,
     isGameOver,
-    getWinner
+    getWinner,
+    chooseComputerMove,
 } from "../othello.js";
 
 describe("createGame", function () {
@@ -337,5 +338,46 @@ describe("getWinner", function () {
         };
 
         assert.strictEqual(getWinner(game), "draw");
+    });
+});
+
+describe("chooseComputerMove", function () {
+    it("returns a legal move for the computer player", function () {
+        const game = createGame();
+        const move = chooseComputerMove(game, BLACK);
+
+        assert.strictEqual(isMoveLegal(game, move[0], move[1], BLACK), true);
+    });
+
+    it("chooses the move that flips the most discs", function () {
+        const game = {
+            board: [
+                [null, null, null, null, null, null],
+                [null, null, null, null, null, null],
+                [null, WHITE, WHITE, WHITE, BLACK, null],
+                [null, WHITE, BLACK, null, null, null],
+                [null, null, null, null, null, null],
+                [null, null, null, null, null, null]
+            ],
+            currentPlayer: BLACK
+        };
+
+        assert.deepStrictEqual(chooseComputerMove(game, BLACK), [2, 0]);
+    });
+
+    it("returns null when the computer player has no legal move", function () {
+        const game = {
+            board: [
+                [BLACK, BLACK, BLACK, BLACK, BLACK, BLACK],
+                [BLACK, BLACK, BLACK, BLACK, BLACK, BLACK],
+                [BLACK, BLACK, BLACK, BLACK, BLACK, BLACK],
+                [BLACK, BLACK, BLACK, BLACK, BLACK, BLACK],
+                [BLACK, BLACK, BLACK, BLACK, BLACK, BLACK],
+                [BLACK, BLACK, BLACK, BLACK, BLACK, BLACK]
+            ],
+            currentPlayer: WHITE
+        };
+
+        assert.strictEqual(chooseComputerMove(game, WHITE), null);
     });
 });
