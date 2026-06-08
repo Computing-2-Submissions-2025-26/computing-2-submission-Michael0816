@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>othello.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Othello.html">Othello</a><ul class='methods'><li data-type='method'><a href="module-Othello.html#~copyBoard">copyBoard</a></li><li data-type='method'><a href="module-Othello.html#~createEmptyBoard">createEmptyBoard</a></li><li data-type='method'><a href="module-Othello.html#~getBoard">getBoard</a></li><li data-type='method'><a href="module-Othello.html#~getCurrentPlayer">getCurrentPlayer</a></li><li data-type='method'><a href="module-Othello.html#~getFlippedDiscsInDirection">getFlippedDiscsInDirection</a></li><li data-type='method'><a href="module-Othello.html#~getOpponent">getOpponent</a></li><li data-type='method'><a href="module-Othello.html#~getScore">getScore</a></li><li data-type='method'><a href="module-Othello.html#~getWinner">getWinner</a></li><li data-type='method'><a href="module-Othello.html#~isGameOver">isGameOver</a></li><li data-type='method'><a href="module-Othello.html#~isInsideBoard">isInsideBoard</a></li><li data-type='method'><a href="module-Othello.html#~isMoveLegal">isMoveLegal</a></li><li data-type='method'><a href="module-Othello.html#~passTurn">passTurn</a></li><li data-type='method'><a href="module-Othello.html#~playMove">playMove</a></li></ul></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">othello.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Othello game module.
+ *
+ * This module represents the state and rules of a two-player Othello game.
+ * The game is played on an even-sized square board. Players take turns placing
+ * discs. A legal move must capture at least one opponent disc in a straight
+ * line. Captured discs are flipped to the current player.
+ *
+ * @module Othello
+ */
+
+const EMPTY = null;
+const BLACK = "black";
+const WHITE = "white";
+
+const DIRECTIONS = [
+    [-1, -1],
+    [-1, 0],
+    [-1, 1],
+    [0, -1],
+    [0, 1],
+    [1, -1],
+    [1, 0],
+    [1, 1]
+];
+
+/**
+ * A player in Othello.
+ *
+ * @typedef {"black" | "white"} Player
+ */
+
+/**
+ * A cell on the Othello board.
+ *
+ * A cell is either empty or occupied by one player's disc.
+ *
+ * @typedef {Player | null} Cell
+ */
+
+/**
+ * A coordinate on the board.
+ *
+ * @typedef {Array&lt;number>} Position
+ */
+
+/**
+ * The state of an Othello game.
+ *
+ * @typedef {Object} GameState
+ * @property {Array&lt;Array&lt;Cell>>} board - The current board.
+ * @property {Player} currentPlayer - The player whose turn it is.
+ */
+
+/**
+ * Creates a new Othello game.
+ *
+ * The board size must be an even number of at least 4. The default board is
+ * 6 by 6, but the same implementation can also create a standard 8 by 8 board.
+ *
+ * @param {number} [size=6] - The width and height of the square board.
+ * @returns {GameState} A new Othello game state.
+ */
+function createEmptyBoard(size) {
+    return Array.from(
+        {length: size},
+        function () {
+            return Array.from(
+                {length: size},
+                function () {
+                    return EMPTY;
+                }
+            );
+        }
+    );
+}
+
+function createGame(size = 6) {
+    if (size &lt; 4 || size % 2 !== 0) {
+        throw new Error("Othello board size must be an even number of at least 4.");
+    }
+
+    const board = createEmptyBoard(size);
+    const middle = size / 2;
+
+    board[middle - 1][middle - 1] = WHITE;
+    board[middle - 1][middle] = BLACK;
+    board[middle][middle - 1] = BLACK;
+    board[middle][middle] = WHITE;
+
+    return {
+        board,
+        currentPlayer: BLACK
+    };
+}
+
+/**
+ * Returns the board from a game state.
+ *
+ * @param {GameState} game - The current game state.
+ * @returns {Array&lt;Array&lt;Cell>>} The board.
+ */
+function getBoard(game) {
+    return game.board;
+}
+
+/**
+ * Returns the player whose turn it is.
+ *
+ * @param {GameState} game - The current game state.
+ * @returns {Player} The current player.
+ */
+function getCurrentPlayer(game) {
+    return game.currentPlayer;
+}
+
+/**
+ * Returns the opponent of a player.
+ *
+ * @param {Player} player - The player.
+ * @returns {Player} The opponent.
+ */
+function getOpponent(player) {
+    if (player === BLACK) {
+        return WHITE;
+    }
+
+    return BLACK;
+}
+
+/**
+ * Checks whether a board coordinate is inside the board.
+ *
+ * @param {GameState} game - The current game state.
+ * @param {number} row - The row index.
+ * @param {number} column - The column index.
+ * @returns {boolean} True if the position is inside the board.
+ */
+function isInsideBoard(game, row, column) {
+    const size = game.board.length;
+
+    return row >= 0 &amp;&amp; row &lt; size &amp;&amp; column >= 0 &amp;&amp; column &lt; size;
+}
+
+/**
+ * Returns the opponent discs that would be flipped by a move.
+ *
+ * If the move does not capture any discs, an empty list is returned.
+ *
+ * @param {GameState} game - The current game state.
+ * @param {number} row - The row index of the move.
+ * @param {number} column - The column index of the move.
+ * @param {Player} [player=game.currentPlayer] - The player making the move.
+ * @returns {Array&lt;Position>} The positions of discs captured by the move.
+ */
+
+function getFlippedDiscsInDirection(game, row, column, player, direction) {
+    const opponent = getOpponent(player);
+    const rowStep = direction[0];
+    const columnStep = direction[1];
+    const flippedDiscs = [];
+
+    let currentRow = row + rowStep;
+    let currentColumn = column + columnStep;
+
+    while (isInsideBoard(game, currentRow, currentColumn)) {
+        const cell = game.board[currentRow][currentColumn];
+
+        if (cell === opponent) {
+            flippedDiscs.push([currentRow, currentColumn]);
+            currentRow += rowStep;
+            currentColumn += columnStep;
+        } else if (cell === player) {
+            return flippedDiscs;
+        } else {
+            return [];
+        }
+    }
+
+    return [];
+}
+function getFlippedDiscs(game, row, column, player = game.currentPlayer) {
+    if (!isInsideBoard(game, row, column)) {
+        return [];
+    }
+
+    if (game.board[row][column] !== EMPTY) {
+        return [];
+    }
+
+    return DIRECTIONS.flatMap(function (direction) {
+        return getFlippedDiscsInDirection(game, row, column, player, direction);
+    });
+}
+
+/**
+ * Checks whether a move is legal for a player.
+ *
+ * A legal move must be placed on an empty cell and must flip at least one
+ * opponent disc.
+ *
+ * @param {GameState} game - The current game state.
+ * @param {number} row - The row index of the move.
+ * @param {number} column - The column index of the move.
+ * @param {Player} [player=game.currentPlayer] - The player making the move.
+ * @returns {boolean} True if the move is legal.
+ */
+function isMoveLegal(game, row, column, player = game.currentPlayer) {
+    return getFlippedDiscs(game, row, column, player).length > 0;
+}
+
+/**
+ * Returns all legal moves for a player.
+ *
+ * @param {GameState} game - The current game state.
+ * @param {Player} [player=game.currentPlayer] - The player to find moves for.
+ * @returns {Array&lt;Position>} The legal move positions.
+ */
+
+function copyBoard(board) {
+    return board.map(function (row) {
+        return row.slice();
+    });
+}
+function getValidMoves(game, player = game.currentPlayer) {
+    return game.board.flatMap(function (rowValues, row) {
+        return rowValues
+            .map(function (cell, column) {
+                return {
+                    row,
+                    column,
+                    cell
+                };
+            })
+            .filter(function (position) {
+                return position.cell === EMPTY;
+            })
+            .filter(function (position) {
+                return isMoveLegal(game, position.row, position.column, player);
+            })
+            .map(function (position) {
+                return [position.row, position.column];
+            });
+    });
+}
+
+/**
+ * Plays a move for the current player.
+ *
+ * If the move is legal, this returns a new game state with the new disc placed,
+ * captured discs flipped, and the turn advanced. If the move is illegal, the
+ * original game state is returned unchanged.
+ *
+ * @param {GameState} game - The current game state.
+ * @param {number} row - The row index of the move.
+ * @param {number} column - The column index of the move.
+ * @returns {GameState} The next game state.
+ */
+function playMove(game, row, column) {
+    const player = game.currentPlayer;
+    const flippedDiscs = getFlippedDiscs(game, row, column, player);
+
+    if (flippedDiscs.length === 0) {
+        return game;
+    }
+
+    const board = copyBoard(game.board);
+
+    board[row][column] = player;
+
+    flippedDiscs.forEach(function (position) {
+        const flippedRow = position[0];
+        const flippedColumn = position[1];
+
+        board[flippedRow][flippedColumn] = player;
+    });
+
+    const opponent = getOpponent(player);
+    const nextGame = {
+        board,
+        currentPlayer: opponent
+    };
+
+    if (getValidMoves(nextGame, opponent).length > 0) {
+        return nextGame;
+    }
+
+    return {
+        board,
+        currentPlayer: player
+    };
+}
+
+/**
+ * Passes the turn to the opponent.
+ *
+ * This is used when the current player has no legal moves.
+ *
+ * @param {GameState} game - The current game state.
+ * @returns {GameState} A new game state with the current player changed.
+ */
+function passTurn(game) {
+    if (getValidMoves(game, game.currentPlayer).length > 0) {
+        return game;
+    }
+
+    return {
+        board: game.board,
+        currentPlayer: getOpponent(game.currentPlayer)
+    };
+}
+
+/**
+ * Counts the number of black and white discs on the board.
+ *
+ * @param {GameState} game - The current game state.
+ * @returns {{black: number, white: number}} The current score.
+ */
+function getScore(game) {
+    return game.board.flat().reduce(
+        function (score, cell) {
+            if (cell === BLACK) {
+                return {
+                    black: score.black + 1,
+                    white: score.white
+                };
+            }
+
+            if (cell === WHITE) {
+                return {
+                    black: score.black,
+                    white: score.white + 1
+                };
+            }
+
+            return score;
+        },
+        {
+            black: 0,
+            white: 0
+        }
+    );
+}
+
+/**
+ * Checks whether the game has ended.
+ *
+ * The game is over when neither player has a legal move.
+ *
+ * @param {GameState} game - The current game state.
+ * @returns {boolean} True if the game is over.
+ */
+function isGameOver(game) {
+    return (
+        getValidMoves(game, BLACK).length === 0 &amp;&amp;
+        getValidMoves(game, WHITE).length === 0
+    );
+}
+
+/**
+ * Returns the winner of the game.
+ *
+ * If the game is not over, null is returned. If the game is over, the player
+ * with more discs wins. If both players have the same number of discs, the
+ * result is "draw".
+ *
+ * @param {GameState} game - The current game state.
+ * @returns {Player | "draw" | null} The winner, draw, or null.
+ */
+function getWinner(game) {
+    if (!isGameOver(game)) {
+        return null;
+    }
+
+    const score = getScore(game);
+
+    if (score.black > score.white) {
+        return BLACK;
+    }
+
+    if (score.white > score.black) {
+        return WHITE;
+    }
+
+    return "draw";
+}
+
+export {
+    EMPTY,
+    BLACK,
+    WHITE,
+    DIRECTIONS,
+    createGame,
+    getBoard,
+    getCurrentPlayer,
+    getOpponent,
+    isInsideBoard,
+    getFlippedDiscs,
+    isMoveLegal,
+    getValidMoves,
+    playMove,
+    passTurn,
+    getScore,
+    isGameOver,
+    getWinner
+};</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> on Mon Jun 08 2026 20:03:06 GMT+0100 (英国夏令时间) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+    <link type="text/css" rel="stylesheet" href="custom.css">
+    
+</body>
+</html>

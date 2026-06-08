@@ -1,9 +1,45 @@
-<!-- In HTML Comments are written like this -->
-<!-- They can all be removed for your apps -->
-<!doctype html> <!-- This first line tells browsers to expect modern standard html 5 -->
-<html lang="en-gb"> <!-- This is indicates the page is written in British English, useful for accessibility -->
-<meta charset="utf-8"> <!-- This indicates how the file is encoded. utf-8 is standard -->
-<title>Your Web-app Title</title> <!-- All pages need a title, this will be displayed in the browser's title bar -->
-<link rel="stylesheet" href="default.css"> <!-- Import style sheet – default.css -->
-<link rel="icon" href="./assets/favicon.png"> <!-- Import 'Favorites Icon' – favicon.png -->
-<script type="module" src="main.js"></script> <!-- Load the main script. Must be type="module". Have only one of these -->
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>6 by 6 Othello</title>
+    <link rel="stylesheet" href="default.css">
+</head>
+<body>
+    <header>
+        <h1>6×6 Othello</h1>
+        <p>A two-player strategy board game implemented with a pure JavaScript game module.</p>
+    </header>
+
+    <main>
+        <section class="game-panel" aria-labelledby="game-heading">
+            <h2 id="game-heading">Game board</h2>
+
+            <p id="status" class="status">Current player: Black</p>
+            <p id="score" class="score">Black: 2 | White: 2</p>
+            <p id="message" class="message" aria-live="polite"></p>
+
+            <div id="board" class="board" aria-label="Othello board"></div>
+
+            <button id="reset-button" type="button">Reset game</button>
+        </section>
+
+        <aside class="rules">
+            <h2>Rules</h2>
+            <p>
+                Players take turns placing black and white discs. A legal move must
+                capture at least one opponent disc in a straight line.
+            </p>
+            <p>
+                Captured discs are flipped to the current player. The game ends when
+                neither player has a legal move. The player with more discs wins.
+            </p>
+            <p>
+                Green dots show legal moves for the current player.
+            </p>
+        </aside>
+    </main>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 2rem;
+    background: #f6f6f2;
+    color: #1d1d1d;
+}
+
+header {
+    max-width: 900px;
+    margin-bottom: 1.5rem;
+}
+
+main {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.game-panel {
+    max-width: 520px;
+}
+
+.status,
+.score,
+.message {
+    font-weight: bold;
+}
+
+.message {
+    min-height: 1.5rem;
+}
+
+.board {
+    display: grid;
+    gap: 0.35rem;
+    width: min(80vw, 480px);
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.cell {
+    aspect-ratio: 1;
+    border: 2px solid #1d1d1d;
+    background: #207a3a;
+    color: #1d1d1d;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+.cell:hover {
+    background: #2e9650;
+}
+
+.cell:focus {
+    outline: 4px solid #ffbf00;
+    outline-offset: 2px;
+}
+
+.cell:disabled {
+    cursor: not-allowed;
+}
+
+.black-disc,
+.white-disc {
+    border-radius: 50%;
+}
+
+.black-disc {
+    background: #111111;
+    color: #ffffff;
+}
+
+.white-disc {
+    background: #f5f5f5;
+    color: #111111;
+}
+
+.valid-move {
+    background: #7ccf8a;
+}
+
+.rules {
+    max-width: 320px;
+    background: #ffffff;
+    border: 2px solid #1d1d1d;
+    padding: 1rem;
+}
+
+#reset-button {
+    padding: 0.7rem 1.1rem;
+    border: 2px solid #1d1d1d;
+    background: #ffffff;
+    color: #1d1d1d;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#reset-button:hover,
+#reset-button:focus {
+    background: #eeeeee;
+}
+
+@media (max-width: 700px) {
+    body {
+        margin: 1rem;
+    }
+
+    main {
+        display: block;
+    }
+
+    .rules {
+        margin-top: 1.5rem;
+    }
+}
