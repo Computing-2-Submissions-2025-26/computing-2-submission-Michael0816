@@ -18,20 +18,41 @@
             <section class="game-card" aria-labelledby="game-heading">
                 <h2 id="game-heading">Game board</h2>
 
-                <div class="score-card">
+                <div class="control-card">
                     <p id="status" class="status">Current player: Black</p>
-                    <p id="score" class="score">Black: 2 | White: 2</p>
                     <p id="message" class="message" aria-live="polite"></p>
 
+                    <div class="score-board" aria-label="Current score">
+                        <div class="score-chip black-score-chip">
+                            <span class="score-label">Black</span>
+                            <span id="black-score" class="score-number">2</span>
+                        </div>
+
+                        <div class="score-chip white-score-chip">
+                            <span class="score-label">White</span>
+                            <span id="white-score" class="score-number">2</span>
+                        </div>
+                    </div>
+
                     <div class="mode-controls" aria-label="Game mode selection">
-                        <button id="pvp-button" class="mode-button active-mode" type="button">
-                            Player vs Player
+                        <button id="pvp-button" class="mode-button active-mode pvp-mode-button" type="button">
+                            <span class="mode-title">PvP</span>
+                            <span class="mode-subtitle">Player vs Player</span>
                         </button>
-                        <button id="pvc-button" class="mode-button" type="button">
-                            Player vs Computer
+
+                        <button id="pvc-button" class="mode-button pvc-mode-button" type="button">
+                            <span class="mode-title">PvC</span>
+                            <span class="mode-subtitle">Player vs Computer</span>
                         </button>
                     </div>
+
+                    <div class="size-controls" aria-label="Board size selection">
+                        <button id="size-6-button" class="size-button active-size" type="button">6×6</button>
+                        <button id="size-8-button" class="size-button" type="button">8×8</button>
+                    </div>
                 </div>
+
+                <div id="result-banner" class="result-banner" aria-live="polite"></div>
 
                 <div id="board" class="board" aria-label="Othello board"></div>
 

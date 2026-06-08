@@ -14,8 +14,8 @@ import {
     playMove
 } from "./othello.js";
 
-let game = createGame(6);
-
+let boardSize = 6;
+let game = createGame(boardSize);
 let gameMode = "pvp";
 let computerTurnPending = false;
 
@@ -26,7 +26,11 @@ let recentlyPlacedDisc = null;
 
 const boardElement = document.querySelector("#board");
 const statusElement = document.querySelector("#status");
-const scoreElement = document.querySelector("#score");
+const blackScoreElement = document.querySelector("#black-score");
+const whiteScoreElement = document.querySelector("#white-score");
+const resultBannerElement = document.querySelector("#result-banner");
+const size6Button = document.querySelector("#size-6-button");
+const size8Button = document.querySelector("#size-8-button");
 const messageElement = document.querySelector("#message");
 const resetButton = document.querySelector("#reset-button");
 
@@ -72,6 +76,16 @@ function includesPosition(positions, row, column) {
     });
 }
 
+function updateBoardStyle() {
+    document.body.dataset.mode = gameMode;
+    document.body.dataset.size = String(boardSize);
+}
+
+function updateSizeButtons() {
+    size6Button.classList.toggle("active-size", boardSize === 6);
+    size8Button.classList.toggle("active-size", boardSize === 8);
+}
+
 function updateModeButtons() {
     pvpButton.classList.toggle("active-mode", gameMode === "pvp");
     pvcButton.classList.toggle("active-mode", gameMode === "pvc");
@@ -89,14 +103,22 @@ function updateStatus() {
     const score = getScore(game);
     const winner = getWinner(game);
 
-    scoreElement.textContent = `Black: ${score.black} | White: ${score.white}`;
+    blackScoreElement.textContent = String(score.black);
+    whiteScoreElement.textContent = String(score.white);
+
+    resultBannerElement.classList.remove("show-result");
 
     if (winner === "draw") {
-        statusElement.textContent = "Game over: draw";
+        statusElement.textContent = "Game over";
+        resultBannerElement.textContent = "Draw game!";
+        resultBannerElement.classList.add("show-result");
     } else if (winner !== null) {
-        statusElement.textContent = `Game over: ${formatPlayer(winner)} wins`;
+        statusElement.textContent = "Game over";
+        resultBannerElement.textContent = `${formatPlayer(winner)} wins!`;
+        resultBannerElement.classList.add("show-result");
     } else {
         statusElement.textContent = `Current player: ${formatPlayer(game.currentPlayer)}`;
+        resultBannerElement.textContent = "";
     }
 }
 
@@ -130,6 +152,7 @@ function scheduleComputerTurn() {
         scheduleComputerTurn();
     }, 500);
 }
+
 
 function handleCellClick(row, column) {
     if (isGameOver(game)) {
@@ -229,34 +252,41 @@ function render() {
     renderBoard();
     updateStatus();
     updateModeButtons();
+    updateSizeButtons();
+    updateBoardStyle();
 }
+
+function restartGame(message) {
+    game = createGame(boardSize);
+    recentlyFlippedDiscs = [];
+    recentlyPlacedDisc = null;
+    messageElement.textContent = message;
+    render();
+    scheduleComputerTurn();
+}
+
+resetButton.addEventListener("click", function () {
+    restartGame("");
+});
 
 pvpButton.addEventListener("click", function () {
     gameMode = "pvp";
-    game = createGame(6);
-    recentlyFlippedDiscs = [];
-    recentlyPlacedDisc = null;
-    messageElement.textContent = "Player vs Player mode selected.";
-    render();
+    restartGame("PvP mode selected.");
 });
 
 pvcButton.addEventListener("click", function () {
     gameMode = "pvc";
-    game = createGame(6);
-    recentlyFlippedDiscs = [];
-    recentlyPlacedDisc = null;
-    messageElement.textContent = "Player vs Computer mode selected. You are Black.";
-    render();
-    scheduleComputerTurn();
+    restartGame("PvC mode selected. You are Black.");
 });
 
-resetButton.addEventListener("click", function () {
-    game = createGame(6);
-    recentlyFlippedDiscs = [];
-    recentlyPlacedDisc = null;
-    messageElement.textContent = "";
-    render();
-    scheduleComputerTurn();
+size6Button.addEventListener("click", function () {
+    boardSize = 6;
+    restartGame("6×6 board selected.");
+});
+
+size8Button.addEventListener("click", function () {
+    boardSize = 8;
+    restartGame("8×8 board selected.");
 });
 
 render();
