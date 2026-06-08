@@ -6,39 +6,45 @@
     <link rel="stylesheet" href="default.css">
 </head>
 <body>
-    <header>
-        <h1>6×6 Othello</h1>
-        <p>A two-player strategy board game implemented with a pure JavaScript game module.</p>
-    </header>
-
-    <main>
-        <section class="game-panel" aria-labelledby="game-heading">
-            <h2 id="game-heading">Game board</h2>
-
-            <p id="status" class="status">Current player: Black</p>
-            <p id="score" class="score">Black: 2 | White: 2</p>
-            <p id="message" class="message" aria-live="polite"></p>
-
-            <div id="board" class="board" aria-label="Othello board"></div>
-
-            <button id="reset-button" type="button">Reset game</button>
-        </section>
-
-        <aside class="rules">
-            <h2>Rules</h2>
+    <div class="page">
+        <header class="hero">
+            <h1>6×6 Othello</h1>
             <p>
-                Players take turns placing black and white discs. A legal move must
-                capture at least one opponent disc in a straight line.
+                A compact two-player strategy board game implemented with a pure JavaScript game module.
             </p>
-            <p>
-                Captured discs are flipped to the current player. The game ends when
-                neither player has a legal move. The player with more discs wins.
-            </p>
-            <p>
-                Green dots show legal moves for the current player.
-            </p>
-        </aside>
-    </main>
+        </header>
+
+        <main class="layout">
+            <section class="game-card" aria-labelledby="game-heading">
+                <h2 id="game-heading">Game board</h2>
+
+                <div class="score-card">
+                    <p id="status" class="status">Current player: Black</p>
+                    <p id="score" class="score">Black: 2 | White: 2</p>
+                    <p id="message" class="message" aria-live="polite"></p>
+                </div>
+
+                <div id="board" class="board" aria-label="Othello board"></div>
+
+                <button id="reset-button" type="button">Reset game</button>
+            </section>
+
+            <aside class="rules-card">
+                <h2>Rules</h2>
+                <p>
+                    Players take turns placing black and white discs. A legal move must
+                    capture at least one opponent disc in a straight line.
+                </p>
+                <p>
+                    Captured discs are flipped to the current player. The game ends when
+                    neither player has a legal move. The player with more discs wins.
+                </p>
+                <p>
+                    Highlighted cells show legal moves for the current player.
+                </p>
+            </aside>
+        </main>
+    </div>
 
     <script type="module" src="main.js"></script>
 </body>

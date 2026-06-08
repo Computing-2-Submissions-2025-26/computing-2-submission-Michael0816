@@ -97,17 +97,16 @@ function createCell(row, column) {
 
     if (value === BLACK) {
         cellButton.classList.add("black-disc");
-        cellButton.textContent = "B";
+        cellButton.textContent = "";
     } else if (value === WHITE) {
         cellButton.classList.add("white-disc");
-        cellButton.textContent = "W";
+        cellButton.textContent = "";
     } else if (isLegal) {
         cellButton.classList.add("valid-move");
-        cellButton.textContent = "•";
+        cellButton.textContent = "";
     } else {
         cellButton.textContent = "";
     }
-
     cellButton.setAttribute(
         "aria-label",
         `Row ${row + 1}, column ${column + 1}, ${formatCellValue(value)}${
