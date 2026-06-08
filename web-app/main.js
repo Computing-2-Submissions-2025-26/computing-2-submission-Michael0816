@@ -3,6 +3,7 @@ import {
     WHITE,
     chooseComputerMove,
     createGame,
+    getFlippedDiscs,
     getOpponent,
     getScore,
     getValidMoves,
@@ -19,6 +20,9 @@ let gameMode = "pvp";
 let computerTurnPending = false;
 
 const COMPUTER_PLAYER = WHITE;
+
+let recentlyFlippedDiscs = [];
+let recentlyPlacedDisc = null;
 
 const boardElement = document.querySelector("#board");
 const statusElement = document.querySelector("#status");
@@ -51,6 +55,21 @@ function formatCellValue(value) {
     }
 
     return "empty cell";
+}
+
+function isSamePosition(firstPosition, secondPosition) {
+    return (
+        firstPosition !== null &&
+        secondPosition !== null &&
+        firstPosition[0] === secondPosition[0] &&
+        firstPosition[1] === secondPosition[1]
+    );
+}
+
+function includesPosition(positions, row, column) {
+    return positions.some(function (position) {
+        return position[0] === row && position[1] === column;
+    });
 }
 
 function updateModeButtons() {
@@ -93,9 +112,15 @@ function scheduleComputerTurn() {
         const move = chooseComputerMove(game, COMPUTER_PLAYER);
 
         if (move === null) {
+            recentlyFlippedDiscs = [];
+            recentlyPlacedDisc = null;
             game = passTurn(game);
+
             messageElement.textContent = "Computer has no legal moves. Turn passed.";
         } else {
+            recentlyFlippedDiscs = getFlippedDiscs(game, move[0], move[1], COMPUTER_PLAYER);
+            recentlyPlacedDisc = [move[0], move[1]];
+
             game = playMove(game, move[0], move[1]);
             messageElement.textContent = "Computer played a move.";
         }
@@ -124,6 +149,9 @@ function handleCellClick(row, column) {
 
     const playerBeforeMove = game.currentPlayer;
     const opponent = getOpponent(playerBeforeMove);
+
+    recentlyFlippedDiscs = getFlippedDiscs(game, row, column, game.currentPlayer);
+    recentlyPlacedDisc = [row, column];
 
     game = playMove(game, row, column);
 
@@ -161,6 +189,15 @@ function createCell(row, column) {
     } else {
         cellButton.textContent = "";
     }
+
+    if (includesPosition(recentlyFlippedDiscs, row, column)) {
+        cellButton.classList.add("recently-flipped");
+    }
+
+    if (isSamePosition(recentlyPlacedDisc, [row, column])) {
+        cellButton.classList.add("recently-placed");
+    }
+
     cellButton.setAttribute(
         "aria-label",
         `Row ${row + 1}, column ${column + 1}, ${formatCellValue(value)}${
@@ -197,6 +234,8 @@ function render() {
 pvpButton.addEventListener("click", function () {
     gameMode = "pvp";
     game = createGame(6);
+    recentlyFlippedDiscs = [];
+    recentlyPlacedDisc = null;
     messageElement.textContent = "Player vs Player mode selected.";
     render();
 });
@@ -204,6 +243,8 @@ pvpButton.addEventListener("click", function () {
 pvcButton.addEventListener("click", function () {
     gameMode = "pvc";
     game = createGame(6);
+    recentlyFlippedDiscs = [];
+    recentlyPlacedDisc = null;
     messageElement.textContent = "Player vs Computer mode selected. You are Black.";
     render();
     scheduleComputerTurn();
@@ -211,6 +252,8 @@ pvcButton.addEventListener("click", function () {
 
 resetButton.addEventListener("click", function () {
     game = createGame(6);
+    recentlyFlippedDiscs = [];
+    recentlyPlacedDisc = null;
     messageElement.textContent = "";
     render();
     scheduleComputerTurn();

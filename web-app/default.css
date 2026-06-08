@@ -457,3 +457,49 @@ body {
         animation: none;
     }
 }
+
+.recently-flipped::after {
+    animation: real-disc-flip 420ms ease-in-out;
+}
+
+.recently-placed::after {
+    animation: real-disc-place 260ms ease-out;
+}
+
+@keyframes real-disc-flip {
+    0% {
+        transform: rotateY(0deg) scale(1);
+    }
+
+    50% {
+        transform: rotateY(90deg) scale(1.08);
+    }
+
+    100% {
+        transform: rotateY(180deg) scale(1);
+    }
+}
+
+@keyframes real-disc-place {
+    0% {
+        transform: scale(0.35);
+        opacity: 0;
+    }
+
+    70% {
+        transform: scale(1.12);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .recently-flipped::after,
+    .recently-placed::after {
+        animation: none;
+    }
+}
