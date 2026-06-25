@@ -2,68 +2,50 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Othello Board Game</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+    <title>Othello</title>
     <link rel="stylesheet" href="default.css">
-    <link rel="icon" type="image/png" href="./assets/Icon.png">
+    <link
+        rel="icon"
+        type="image/png"
+        href="./assets/Icon.png"
+    >
 </head>
-
 <body>
     <div class="page">
         <header class="hero">
             <h1>Othello</h1>
             <p>
-                Play against another player or the computer on a 6×6 or 8×8 board.
+                A compact strategy board game built with JavaScript.
             </p>
         </header>
 
         <main class="layout">
-            <section class="game-card" aria-labelledby="game-heading">
+            <section
+                class="game-card"
+                aria-labelledby="game-heading"
+            >
                 <h2 id="game-heading">Game board</h2>
 
                 <div class="control-card">
-                    <p id="status" class="status">
-                        Current player: Black
-                    </p>
-
-                    <p
-                        id="message"
-                        class="message"
-                        aria-live="polite"
-                    ></p>
-
-                    <div
-                        class="score-board"
-                        aria-label="Current score"
-                    >
-                        <div class="score-chip black-score-chip">
-                            <span class="score-label">Black</span>
-                            <span
-                                id="black-score"
-                                class="score-number"
-                            >2</span>
-                        </div>
-
-                        <div class="score-chip white-score-chip">
-                            <span class="score-label">White</span>
-                            <span
-                                id="white-score"
-                                class="score-number"
-                            >2</span>
-                        </div>
-                    </div>
-
                     <div
                         class="mode-controls"
                         aria-label="Game mode selection"
                     >
                         <button
                             id="pvp-button"
-                            class="mode-button active-mode pvp-mode-button"
+                            class="mode-button active-mode
+                                pvp-mode-button"
                             type="button"
                             aria-pressed="true"
                         >
-                            <span class="mode-title">PvP</span>
+                            <span class="mode-title">
+                                PvP
+                            </span>
+
                             <span class="mode-subtitle">
                                 Player vs Player
                             </span>
@@ -75,7 +57,10 @@
                             type="button"
                             aria-pressed="false"
                         >
-                            <span class="mode-title">PvC</span>
+                            <span class="mode-title">
+                                PvC
+                            </span>
+
                             <span class="mode-subtitle">
                                 Player vs Computer
                             </span>
@@ -112,13 +97,86 @@
                     aria-live="polite"
                 ></div>
 
+                <section
+                    id="turn-panel"
+                    class="turn-panel black-turn"
+                    aria-live="polite"
+                    aria-atomic="true"
+                >
+                    <div class="turn-main">
+                        <span
+                            id="turn-disc"
+                            class="turn-disc"
+                            aria-hidden="true"
+                        ></span>
+
+                        <div class="turn-information">
+                            <span class="turn-label">
+                                Current turn
+                            </span>
+
+                            <strong
+                                id="status"
+                                class="status"
+                            >
+                                Black
+                            </strong>
+
+                            <span
+                                id="turn-notice"
+                                class="turn-notice"
+                            ></span>
+                        </div>
+
+                        <div
+                            class="compact-score-board"
+                            aria-label="Current score"
+                        >
+                            <div class="compact-score black-compact-score">
+                                <span class="compact-score-label">
+                                    Black
+                                </span>
+
+                                <strong
+                                    id="black-score"
+                                    class="compact-score-number"
+                                >
+                                    2
+                                </strong>
+                            </div>
+
+                            <div class="compact-score white-compact-score">
+                                <span class="compact-score-label">
+                                    White
+                                </span>
+
+                                <strong
+                                    id="white-score"
+                                    class="compact-score-number"
+                                >
+                                    2
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p
+                        id="message"
+                        class="hud-message"
+                        aria-live="polite"
+                    ></p>
+                </section>
+
                 <div
                     id="board"
                     class="board"
                     aria-label="Othello board"
                 ></div>
 
-                <button id="reset-button" type="button">
+                <button
+                    id="reset-button"
+                    type="button"
+                >
                     Reset game
                 </button>
             </section>
@@ -138,9 +196,15 @@
                             <span class="demo-cell"></span>
 
                             <span class="demo-cell"></span>
-                            <span class="demo-cell demo-black"></span>
-                            <span class="demo-cell demo-white demo-flip"></span>
-                            <span class="demo-cell demo-move"></span>
+                            <span
+                                class="demo-cell demo-black"
+                            ></span>
+                            <span
+                                class="demo-cell demo-white demo-flip"
+                            ></span>
+                            <span
+                                class="demo-cell demo-move"
+                            ></span>
 
                             <span class="demo-cell"></span>
                             <span class="demo-cell"></span>
@@ -161,12 +225,12 @@
 
                             <p>
                                 <strong>2.</strong>
-                                Trap a white disc between two black discs.
+                                Trap an opponent disc.
                             </p>
 
                             <p>
                                 <strong>3.</strong>
-                                Captured discs flip to your colour.
+                                Captured discs change colour.
                             </p>
                         </div>
                     </div>
@@ -175,19 +239,20 @@
                 <h2>Rules</h2>
 
                 <p>
-                    Players take turns placing black and white discs.
-                    A legal move must capture at least one opponent disc
-                    in a straight line.
+                    Players take turns placing black and white
+                    discs. A legal move must capture at least one
+                    opponent disc in a straight line.
                 </p>
 
                 <p>
-                    Captured discs are flipped to the current player.
-                    The game ends when neither player has a legal move.
-                    The player with more discs wins.
+                    Captured discs are flipped to the current
+                    player. The game ends when neither player has
+                    a legal move. The player with more discs wins.
                 </p>
 
                 <p>
-                    Highlighted cells show legal moves for the current player.
+                    Highlighted cells show legal moves for the
+                    current player.
                 </p>
             </aside>
         </main>

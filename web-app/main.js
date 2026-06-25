@@ -24,6 +24,7 @@ let computerTurnTimer = null;
 
 let recentlyFlippedDiscs = [];
 let recentlyPlacedDisc = null;
+let turnNotice = "";
 
 let render;
 let scheduleComputerTurn;
@@ -40,6 +41,10 @@ const messageElement = document.querySelector("#message");
 const resetButton = document.querySelector("#reset-button");
 const pvpButton = document.querySelector("#pvp-button");
 const pvcButton = document.querySelector("#pvc-button");
+
+const turnPanelElement = document.querySelector("#turn-panel");
+const turnDiscElement = document.querySelector("#turn-disc");
+const turnNoticeElement = document.querySelector("#turn-notice");
 
 function formatPlayer(player) {
     if (player === BLACK) {
@@ -149,28 +154,63 @@ function isComputerTurn() {
 function updateStatus() {
     const score = getScore(game);
     const winner = getWinner(game);
+    const currentPlayer = game.currentPlayer;
 
     blackScoreElement.textContent = String(score.black);
     whiteScoreElement.textContent = String(score.white);
 
     resultBannerElement.classList.remove("show-result");
 
+    turnPanelElement.classList.remove(
+        "black-turn",
+        "white-turn",
+        "game-finished"
+    );
+
     if (winner === "draw") {
-        statusElement.textContent = "Game over";
+        statusElement.textContent = "Draw";
+        turnNoticeElement.textContent = "The game has ended.";
+
+        turnPanelElement.classList.add("game-finished");
+
         resultBannerElement.textContent = "Draw game!";
         resultBannerElement.classList.add("show-result");
-    } else if (winner !== null) {
-        statusElement.textContent = "Game over";
+
+        return;
+    }
+
+    if (winner !== null) {
+        statusElement.textContent = (
+            `${formatPlayer(winner)} wins`
+        );
+
+        turnNoticeElement.textContent = "The game has ended.";
+
+        turnPanelElement.classList.add("game-finished");
+
         resultBannerElement.textContent = (
             `${formatPlayer(winner)} wins!`
         );
+
         resultBannerElement.classList.add("show-result");
-    } else {
-        statusElement.textContent = (
-            `Current player: ${formatPlayer(game.currentPlayer)}`
-        );
-        resultBannerElement.textContent = "";
+
+        return;
     }
+
+    statusElement.textContent = formatPlayer(currentPlayer);
+    turnNoticeElement.textContent = turnNotice;
+    resultBannerElement.textContent = "";
+
+    if (currentPlayer === BLACK) {
+        turnPanelElement.classList.add("black-turn");
+    } else {
+        turnPanelElement.classList.add("white-turn");
+    }
+
+    turnDiscElement.setAttribute(
+        "aria-label",
+        `${formatPlayer(currentPlayer)} disc`
+    );
 }
 
 function cancelComputerTurn() {
@@ -266,7 +306,11 @@ function renderBoard() {
     game.board.forEach(function (rowValues, row) {
         rowValues.forEach(function (cellValue, column) {
             boardElement.appendChild(
-                createCell(row, column, cellValue)
+                createCell(
+                    row,
+                    column,
+                    cellValue
+                )
             );
         });
     });
@@ -286,7 +330,9 @@ scheduleComputerTurn = function () {
     }
 
     computerTurnPending = true;
+    turnNotice = "Computer is thinking...";
     messageElement.textContent = "Computer is thinking...";
+
     render();
 
     computerTurnTimer = setTimeout(function () {
@@ -305,12 +351,17 @@ scheduleComputerTurn = function () {
         if (move === null) {
             recentlyFlippedDiscs = [];
             recentlyPlacedDisc = null;
+
             game = passTurn(game);
+
+            turnNotice = "White skipped — Black plays again";
 
             messageElement.textContent = (
                 "Computer has no legal moves. Turn passed."
             );
         } else {
+            turnNotice = "";
+
             recentlyFlippedDiscs = getFlippedDiscs(
                 game,
                 move[0],
@@ -346,6 +397,7 @@ handleCellClick = function (row, column) {
         messageElement.textContent = (
             "The game is already over."
         );
+
         return;
     }
 
@@ -353,6 +405,7 @@ handleCellClick = function (row, column) {
         messageElement.textContent = (
             "Please wait for the computer move."
         );
+
         return;
     }
 
@@ -365,6 +418,7 @@ handleCellClick = function (row, column) {
         messageElement.textContent = (
             "That move is not legal."
         );
+
         return;
     }
 
@@ -394,11 +448,17 @@ handleCellClick = function (row, column) {
         game.currentPlayer === playerBeforeMove &&
         getValidMoves(game, opponent).length === 0
     ) {
+        turnNotice = (
+            `${formatPlayer(opponent)} skipped — ` +
+            `${formatPlayer(playerBeforeMove)} plays again`
+        );
+
         messageElement.textContent = (
             `${formatPlayer(opponent)} has no legal moves. ` +
             "Turn passed."
         );
     } else {
+        turnNotice = "";
         messageElement.textContent = "";
     }
 
@@ -410,8 +470,11 @@ function restartGame(message) {
     cancelComputerTurn();
 
     game = createGame(boardSize);
+
     recentlyFlippedDiscs = [];
     recentlyPlacedDisc = null;
+    turnNotice = "";
+
     messageElement.textContent = message;
 
     render();
@@ -443,4 +506,3 @@ size8Button.addEventListener("click", function () {
 });
 
 render();
-
