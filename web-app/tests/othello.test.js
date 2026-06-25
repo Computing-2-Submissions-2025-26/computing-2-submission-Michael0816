@@ -58,15 +58,23 @@ describe("createGame", function () {
     });
 
     it("rejects an odd board size", function () {
-        assert.throws(function () {
-            createGame(7);
-        });
+        assert.throws(
+            function () {
+                createGame(7);
+            },
+            /even\snumber/,
+            "An odd board size should be rejected."
+        );
     });
 
     it("rejects a board smaller than 4", function () {
-        assert.throws(function () {
-            createGame(2);
-        });
+        assert.throws(
+            function () {
+                createGame(2);
+            },
+            /at\sleast\s4/,
+            "A board smaller than 4 should be rejected."
+        );
     });
 });
 
@@ -172,7 +180,8 @@ describe("getFlippedDiscs", function () {
                 [1, 1],
                 [1, 2],
                 [2, 1]
-            ]
+            ],
+            "The move should flip discs in three directions."
         );
     });
 
@@ -194,7 +203,8 @@ describe("getFlippedDiscs", function () {
             [
                 [0, 1],
                 [0, 2]
-            ]
+            ],
+            "The move should capture both discs along the top edge."
         );
     });
 });
@@ -274,7 +284,11 @@ describe("playMove", function () {
         const game = createGame();
         const nextGame = playMove(game, 1, 2);
 
-        assert.strictEqual(nextGame.currentPlayer, WHITE);
+        assert.strictEqual(
+            nextGame.currentPlayer,
+            WHITE,
+            "The turn should switch to White after Black moves."
+        );
     });
 
     it("does not change the original game state", function () {
@@ -283,8 +297,16 @@ describe("playMove", function () {
 
         assert.strictEqual(game.board[1][2], null);
         assert.strictEqual(game.board[2][2], WHITE);
-        assert.notStrictEqual(nextGame, game);
-        assert.notStrictEqual(nextGame.board, game.board);
+        assert.notStrictEqual(
+            nextGame,
+            game,
+            "playMove should return a new game state."
+        );
+        assert.notStrictEqual(
+            nextGame.board,
+            game.board,
+            "playMove should return a new board."
+        );
     });
 
     it("returns the same game state after an illegal move", function () {
@@ -314,6 +336,28 @@ describe("playMove", function () {
         assert.strictEqual(nextGame.board[2][1], BLACK);
         assert.strictEqual(nextGame.board[2][2], BLACK);
     });
+
+    it("keeps the player when the opponent cannot move", function () {
+        const game = {
+            board: [
+                [BLACK, BLACK, BLACK, BLACK, BLACK, BLACK],
+                [BLACK, BLACK, BLACK, BLACK, BLACK, BLACK],
+                [BLACK, BLACK, BLACK, BLACK, BLACK, BLACK],
+                [BLACK, BLACK, BLACK, BLACK, BLACK, BLACK],
+                [BLACK, BLACK, BLACK, WHITE, null, BLACK],
+                [BLACK, BLACK, BLACK, BLACK, BLACK, BLACK]
+            ],
+            currentPlayer: BLACK
+        };
+
+        const nextGame = playMove(game, 4, 4);
+
+        assert.strictEqual(
+            nextGame.currentPlayer,
+            BLACK,
+            "Black should keep the turn when White cannot move."
+        );
+    });
 });
 
 describe("getScore", function () {
@@ -330,10 +374,14 @@ describe("getScore", function () {
         const game = createGame();
         const nextGame = playMove(game, 1, 2);
 
-        assert.deepStrictEqual(getScore(nextGame), {
-            black: 4,
-            white: 1
-        });
+        assert.deepStrictEqual(
+            getScore(nextGame),
+            {
+                black: 4,
+                white: 1
+            },
+            "The score should include the placed and flipped discs."
+        );
     });
 });
 
@@ -360,7 +408,11 @@ describe("passTurn", function () {
 
         const nextGame = passTurn(game);
 
-        assert.strictEqual(nextGame.currentPlayer, WHITE);
+        assert.strictEqual(
+            nextGame.currentPlayer,
+            WHITE,
+            "The turn should pass when Black has no legal moves."
+        );
     });
 });
 
@@ -408,7 +460,11 @@ describe("getWinner", function () {
             currentPlayer: BLACK
         };
 
-        assert.strictEqual(getWinner(game), BLACK);
+        assert.strictEqual(
+            getWinner(game),
+            BLACK,
+            "Black should win when Black has more discs."
+        );
     });
 
     it("returns white when white has more discs", function () {
@@ -424,7 +480,11 @@ describe("getWinner", function () {
             currentPlayer: WHITE
         };
 
-        assert.strictEqual(getWinner(game), WHITE);
+        assert.strictEqual(
+            getWinner(game),
+            WHITE,
+            "White should win when White has more discs."
+        );
     });
 
     it("returns draw when both players have the same score", function () {
@@ -440,7 +500,11 @@ describe("getWinner", function () {
             currentPlayer: BLACK
         };
 
-        assert.strictEqual(getWinner(game), "draw");
+        assert.strictEqual(
+            getWinner(game),
+            "draw",
+            "The result should be a draw when scores are equal."
+        );
     });
 });
 
@@ -470,7 +534,8 @@ describe("chooseComputerMove", function () {
 
         assert.deepStrictEqual(
             chooseComputerMove(game, BLACK),
-            [2, 0]
+            [2, 0],
+            "The computer should choose the move with most captures."
         );
     });
 
@@ -489,7 +554,8 @@ describe("chooseComputerMove", function () {
 
         assert.strictEqual(
             chooseComputerMove(game, WHITE),
-            null
+            null,
+            "The computer should return null when no move is available."
         );
     });
 });
