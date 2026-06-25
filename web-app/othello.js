@@ -82,49 +82,6 @@ function copyBoard(board) {
 }
 
 /**
- * Finds captured discs in one direction.
- *
- * @private
- * @param {GameState} game - The current game state.
- * @param {number} row - The row index of the move.
- * @param {number} column - The column index of the move.
- * @param {Player} player - The player making the move.
- * @param {Position} direction - The direction to check.
- * @returns {Array<Position>} The captured disc positions.
- */
-function getFlippedDiscsInDirection(
-    game,
-    row,
-    column,
-    player,
-    direction
-) {
-    const opponent = getOpponent(player);
-    const rowStep = direction[0];
-    const columnStep = direction[1];
-    const flippedDiscs = [];
-
-    let currentRow = row + rowStep;
-    let currentColumn = column + columnStep;
-
-    while (isInsideBoard(game, currentRow, currentColumn)) {
-        const cell = game.board[currentRow][currentColumn];
-
-        if (cell === opponent) {
-            flippedDiscs.push([currentRow, currentColumn]);
-            currentRow += rowStep;
-            currentColumn += columnStep;
-        } else if (cell === player) {
-            return flippedDiscs;
-        } else {
-            return [];
-        }
-    }
-
-    return [];
-}
-
-/**
  * Creates a new Othello game.
  *
  * The board size must be an even number of at least 4.
@@ -208,6 +165,49 @@ function isInsideBoard(game, row, column) {
 }
 
 /**
+ * Finds captured discs in one direction.
+ *
+ * @private
+ * @param {GameState} game - The current game state.
+ * @param {number} row - The row index of the move.
+ * @param {number} column - The column index of the move.
+ * @param {Player} player - The player making the move.
+ * @param {Position} direction - The direction to check.
+ * @returns {Array<Position>} The captured disc positions.
+ */
+function getFlippedDiscsInDirection(
+    game,
+    row,
+    column,
+    player,
+    direction
+) {
+    const opponent = getOpponent(player);
+    const rowStep = direction[0];
+    const columnStep = direction[1];
+    const flippedDiscs = [];
+
+    let currentRow = row + rowStep;
+    let currentColumn = column + columnStep;
+
+    while (isInsideBoard(game, currentRow, currentColumn)) {
+        const cell = game.board[currentRow][currentColumn];
+
+        if (cell === opponent) {
+            flippedDiscs.push([currentRow, currentColumn]);
+            currentRow += rowStep;
+            currentColumn += columnStep;
+        } else if (cell === player) {
+            return flippedDiscs;
+        } else {
+            return [];
+        }
+    }
+
+    return [];
+}
+
+/**
  * Returns the opponent discs captured by a move.
  *
  * @param {GameState} game - The current game state.
@@ -274,30 +274,36 @@ function isMoveLegal(
 
 function getValidMoves(game, player = game.currentPlayer) {
     return game.board.flatMap(function (rowValues, row) {
-        return rowValues
-            .map(function (cell, column) {
-                return {
-                    row,
-                    column,
-                    cell
-                };
-            })
-            .filter(function (position) {
-                return position.cell === EMPTY;
-            })
-            .filter(function (position) {
-                return isMoveLegal(
-                    game,
-                    position.row,
-                    position.column,
-                    player
-                );
-            })
-            .map(function (position) {
-                return [position.row, position.column];
-            });
+        const positions = rowValues.map(function (cell, column) {
+            return {
+                row,
+                column,
+                cell
+            };
+        });
+
+        const emptyPositions = positions.filter(function (position) {
+            return position.cell === EMPTY;
+        });
+
+        const legalPositions = emptyPositions.filter(function (position) {
+            return isMoveLegal(
+                game,
+                position.row,
+                position.column,
+                player
+            );
+        });
+
+        return legalPositions.map(function (position) {
+            return [
+                position.row,
+                position.column
+            ];
+        });
     });
 }
+
 
 /**
  * Chooses a move for the computer player.

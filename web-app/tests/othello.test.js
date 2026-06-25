@@ -26,7 +26,7 @@ describe("createGame", function () {
         assert.strictEqual(game.board[0].length, 6);
     });
 
-    it("places the four starting discs in the centre of a 6 by 6 board", function () {
+    it("places the starting discs on a 6 by 6 board", function () {
         const game = createGame();
 
         assert.strictEqual(game.board[2][2], WHITE);
@@ -42,7 +42,7 @@ describe("createGame", function () {
         assert.strictEqual(game.board[0].length, 8);
     });
 
-    it("places the four starting discs in the centre of an 8 by 8 board", function () {
+    it("places the starting discs on an 8 by 8 board", function () {
         const game = createGame(8);
 
         assert.strictEqual(game.board[3][3], WHITE);
@@ -98,7 +98,7 @@ describe("isInsideBoard", function () {
 });
 
 describe("getFlippedDiscs", function () {
-    it("returns the opponent disc captured by a legal opening move", function () {
+    it("finds the disc captured by an opening move", function () {
         const game = createGame();
 
         assert.deepStrictEqual(
@@ -134,7 +134,7 @@ describe("getFlippedDiscs", function () {
         );
     });
 
-    it("returns an empty list when a line is not closed by the current player", function () {
+    it("returns no discs when a line is not closed", function () {
         const game = {
             board: [
                 [null, null, null, null, null, null],
@@ -218,7 +218,7 @@ describe("isMoveLegal", function () {
         assert.strictEqual(isMoveLegal(game, 2, 2, BLACK), false);
     });
 
-    it("can check legal moves for a player other than the current player", function () {
+    it("checks a move for a different player", function () {
         const game = createGame();
 
         assert.strictEqual(isMoveLegal(game, 1, 3, WHITE), true);
@@ -338,14 +338,14 @@ describe("getScore", function () {
 });
 
 describe("passTurn", function () {
-    it("returns the same game when the current player has a legal move", function () {
+    it("keeps the turn when a legal move is available", function () {
         const game = createGame();
         const nextGame = passTurn(game);
 
         assert.strictEqual(nextGame, game);
     });
 
-    it("passes the turn when the current player has no legal moves", function () {
+    it("passes when the current player has no legal moves", function () {
         const game = {
             board: [
                 [WHITE, WHITE, WHITE, WHITE, WHITE, WHITE],
