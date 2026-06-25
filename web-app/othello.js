@@ -1,10 +1,7 @@
 /**
  * Othello game module.
  *
- * This module represents the state and rules of a two-player Othello game.
- * The game is played on an even-sized square board. Players take turns placing
- * discs. A legal move must capture at least one opponent disc in a straight
- * line. Captured discs are flipped to the current player.
+ * This module stores the game state and applies the rules of Othello.
  *
  * @module Othello
  */
@@ -31,21 +28,19 @@ const DIRECTIONS = [
  */
 
 /**
- * A cell on the Othello board.
- *
- * A cell is either empty or occupied by one player's disc.
+ * A cell on the board.
  *
  * @typedef {Player | null} Cell
  */
 
 /**
- * A coordinate on the board.
+ * A row and column position.
  *
  * @typedef {Array<number>} Position
  */
 
 /**
- * The state of an Othello game.
+ * The current state of a game.
  *
  * @typedef {Object} GameState
  * @property {Array<Array<Cell>>} board - The current board.
@@ -53,13 +48,11 @@ const DIRECTIONS = [
  */
 
 /**
- * Creates a new Othello game.
+ * Creates an empty square board.
  *
- * The board size must be an even number of at least 4. The default board is
- * 6 by 6, but the same implementation can also create a standard 8 by 8 board.
- *
- * @param {number} [size=6] - The width and height of the square board.
- * @returns {GameState} A new Othello game state.
+ * @private
+ * @param {number} size - The width and height of the board.
+ * @returns {Array<Array<Cell>>} An empty board.
  */
 function createEmptyBoard(size) {
     return Array.from(
@@ -75,9 +68,76 @@ function createEmptyBoard(size) {
     );
 }
 
+/**
+ * Copies a board without changing the original.
+ *
+ * @private
+ * @param {Array<Array<Cell>>} board - The board to copy.
+ * @returns {Array<Array<Cell>>} A copied board.
+ */
+function copyBoard(board) {
+    return board.map(function (row) {
+        return row.slice();
+    });
+}
+
+/**
+ * Finds captured discs in one direction.
+ *
+ * @private
+ * @param {GameState} game - The current game state.
+ * @param {number} row - The row index of the move.
+ * @param {number} column - The column index of the move.
+ * @param {Player} player - The player making the move.
+ * @param {Position} direction - The direction to check.
+ * @returns {Array<Position>} The captured disc positions.
+ */
+function getFlippedDiscsInDirection(
+    game,
+    row,
+    column,
+    player,
+    direction
+) {
+    const opponent = getOpponent(player);
+    const rowStep = direction[0];
+    const columnStep = direction[1];
+    const flippedDiscs = [];
+
+    let currentRow = row + rowStep;
+    let currentColumn = column + columnStep;
+
+    while (isInsideBoard(game, currentRow, currentColumn)) {
+        const cell = game.board[currentRow][currentColumn];
+
+        if (cell === opponent) {
+            flippedDiscs.push([currentRow, currentColumn]);
+            currentRow += rowStep;
+            currentColumn += columnStep;
+        } else if (cell === player) {
+            return flippedDiscs;
+        } else {
+            return [];
+        }
+    }
+
+    return [];
+}
+
+/**
+ * Creates a new Othello game.
+ *
+ * The board size must be an even number of at least 4.
+ *
+ * @param {number} [size=6] - The width and height of the board.
+ * @returns {GameState} A new game state.
+ * @throws {Error} If the size is odd or smaller than 4.
+ */
 function createGame(size = 6) {
     if (size < 4 || size % 2 !== 0) {
-        throw new Error("Othello board size must be an even number of at least 4.");
+        throw new Error(
+            "Othello board size must be an even number of at least 4."
+        );
     }
 
     const board = createEmptyBoard(size);
@@ -129,7 +189,7 @@ function getOpponent(player) {
 }
 
 /**
- * Checks whether a board coordinate is inside the board.
+ * Checks whether a position is inside the board.
  *
  * @param {GameState} game - The current game state.
  * @param {number} row - The row index.
@@ -139,47 +199,29 @@ function getOpponent(player) {
 function isInsideBoard(game, row, column) {
     const size = game.board.length;
 
-    return row >= 0 && row < size && column >= 0 && column < size;
+    return (
+        row >= 0 &&
+        row < size &&
+        column >= 0 &&
+        column < size
+    );
 }
 
 /**
- * Returns the opponent discs that would be flipped by a move.
- *
- * If the move does not capture any discs, an empty list is returned.
+ * Returns the opponent discs captured by a move.
  *
  * @param {GameState} game - The current game state.
  * @param {number} row - The row index of the move.
  * @param {number} column - The column index of the move.
  * @param {Player} [player=game.currentPlayer] - The player making the move.
- * @returns {Array<Position>} The positions of discs captured by the move.
+ * @returns {Array<Position>} The captured disc positions.
  */
-
-function getFlippedDiscsInDirection(game, row, column, player, direction) {
-    const opponent = getOpponent(player);
-    const rowStep = direction[0];
-    const columnStep = direction[1];
-    const flippedDiscs = [];
-
-    let currentRow = row + rowStep;
-    let currentColumn = column + columnStep;
-
-    while (isInsideBoard(game, currentRow, currentColumn)) {
-        const cell = game.board[currentRow][currentColumn];
-
-        if (cell === opponent) {
-            flippedDiscs.push([currentRow, currentColumn]);
-            currentRow += rowStep;
-            currentColumn += columnStep;
-        } else if (cell === player) {
-            return flippedDiscs;
-        } else {
-            return [];
-        }
-    }
-
-    return [];
-}
-function getFlippedDiscs(game, row, column, player = game.currentPlayer) {
+function getFlippedDiscs(
+    game,
+    row,
+    column,
+    player = game.currentPlayer
+) {
     if (!isInsideBoard(game, row, column)) {
         return [];
     }
@@ -189,15 +231,18 @@ function getFlippedDiscs(game, row, column, player = game.currentPlayer) {
     }
 
     return DIRECTIONS.flatMap(function (direction) {
-        return getFlippedDiscsInDirection(game, row, column, player, direction);
+        return getFlippedDiscsInDirection(
+            game,
+            row,
+            column,
+            player,
+            direction
+        );
     });
 }
 
 /**
- * Checks whether a move is legal for a player.
- *
- * A legal move must be placed on an empty cell and must flip at least one
- * opponent disc.
+ * Checks whether a move is legal.
  *
  * @param {GameState} game - The current game state.
  * @param {number} row - The row index of the move.
@@ -205,23 +250,28 @@ function getFlippedDiscs(game, row, column, player = game.currentPlayer) {
  * @param {Player} [player=game.currentPlayer] - The player making the move.
  * @returns {boolean} True if the move is legal.
  */
-function isMoveLegal(game, row, column, player = game.currentPlayer) {
-    return getFlippedDiscs(game, row, column, player).length > 0;
+function isMoveLegal(
+    game,
+    row,
+    column,
+    player = game.currentPlayer
+) {
+    return getFlippedDiscs(
+        game,
+        row,
+        column,
+        player
+    ).length > 0;
 }
 
 /**
  * Returns all legal moves for a player.
  *
  * @param {GameState} game - The current game state.
- * @param {Player} [player=game.currentPlayer] - The player to find moves for.
+ * @param {Player} [player=game.currentPlayer] - The player to check.
  * @returns {Array<Position>} The legal move positions.
  */
 
-function copyBoard(board) {
-    return board.map(function (row) {
-        return row.slice();
-    });
-}
 function getValidMoves(game, player = game.currentPlayer) {
     return game.board.flatMap(function (rowValues, row) {
         return rowValues
@@ -236,7 +286,12 @@ function getValidMoves(game, player = game.currentPlayer) {
                 return position.cell === EMPTY;
             })
             .filter(function (position) {
-                return isMoveLegal(game, position.row, position.column, player);
+                return isMoveLegal(
+                    game,
+                    position.row,
+                    position.column,
+                    player
+                );
             })
             .map(function (position) {
                 return [position.row, position.column];
@@ -247,15 +302,16 @@ function getValidMoves(game, player = game.currentPlayer) {
 /**
  * Chooses a move for the computer player.
  *
- * The computer uses a simple greedy strategy: it chooses the legal move that
- * flips the greatest number of opponent discs. If there are no legal moves,
- * null is returned.
+ * The computer chooses the move that flips the most discs.
  *
  * @param {GameState} game - The current game state.
  * @param {Player} [player=game.currentPlayer] - The computer player.
- * @returns {Position | null} The chosen move, or null if no move is available.
+ * @returns {Position | null} A move, or null if none are available.
  */
-function chooseComputerMove(game, player = game.currentPlayer) {
+function chooseComputerMove(
+    game,
+    player = game.currentPlayer
+) {
     const validMoves = getValidMoves(game, player);
 
     if (validMoves.length === 0) {
@@ -291,9 +347,8 @@ function chooseComputerMove(game, player = game.currentPlayer) {
 /**
  * Plays a move for the current player.
  *
- * If the move is legal, this returns a new game state with the new disc placed,
- * captured discs flipped, and the turn advanced. If the move is illegal, the
- * original game state is returned unchanged.
+ * A legal move returns a new game state. An illegal move returns the original
+ * game state unchanged.
  *
  * @param {GameState} game - The current game state.
  * @param {number} row - The row index of the move.
@@ -302,7 +357,12 @@ function chooseComputerMove(game, player = game.currentPlayer) {
  */
 function playMove(game, row, column) {
     const player = game.currentPlayer;
-    const flippedDiscs = getFlippedDiscs(game, row, column, player);
+    const flippedDiscs = getFlippedDiscs(
+        game,
+        row,
+        column,
+        player
+    );
 
     if (flippedDiscs.length === 0) {
         return game;
@@ -336,12 +396,10 @@ function playMove(game, row, column) {
 }
 
 /**
- * Passes the turn to the opponent.
- *
- * This is used when the current player has no legal moves.
+ * Passes the turn when the current player has no legal moves.
  *
  * @param {GameState} game - The current game state.
- * @returns {GameState} A new game state with the current player changed.
+ * @returns {GameState} The next game state.
  */
 function passTurn(game) {
     if (getValidMoves(game, game.currentPlayer).length > 0) {
@@ -355,7 +413,7 @@ function passTurn(game) {
 }
 
 /**
- * Counts the number of black and white discs on the board.
+ * Counts the black and white discs.
  *
  * @param {GameState} game - The current game state.
  * @returns {{black: number, white: number}} The current score.
@@ -389,10 +447,8 @@ function getScore(game) {
 /**
  * Checks whether the game has ended.
  *
- * The game is over when neither player has a legal move.
- *
  * @param {GameState} game - The current game state.
- * @returns {boolean} True if the game is over.
+ * @returns {boolean} True if neither player has a legal move.
  */
 function isGameOver(game) {
     return (
@@ -403,10 +459,6 @@ function isGameOver(game) {
 
 /**
  * Returns the winner of the game.
- *
- * If the game is not over, null is returned. If the game is over, the player
- * with more discs wins. If both players have the same number of discs, the
- * result is "draw".
  *
  * @param {GameState} game - The current game state.
  * @returns {Player | "draw" | null} The winner, draw, or null.
@@ -447,5 +499,5 @@ export {
     getScore,
     isGameOver,
     getWinner,
-    chooseComputerMove,
+    chooseComputerMove
 };

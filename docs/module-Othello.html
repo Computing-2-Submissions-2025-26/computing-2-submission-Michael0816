@@ -29,7 +29,7 @@
 <nav >
     
     
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Othello.html">Othello</a><ul class='methods'><li data-type='method'><a href="module-Othello.html#~copyBoard">copyBoard</a></li><li data-type='method'><a href="module-Othello.html#~createEmptyBoard">createEmptyBoard</a></li><li data-type='method'><a href="module-Othello.html#~getBoard">getBoard</a></li><li data-type='method'><a href="module-Othello.html#~getCurrentPlayer">getCurrentPlayer</a></li><li data-type='method'><a href="module-Othello.html#~getFlippedDiscsInDirection">getFlippedDiscsInDirection</a></li><li data-type='method'><a href="module-Othello.html#~getOpponent">getOpponent</a></li><li data-type='method'><a href="module-Othello.html#~getScore">getScore</a></li><li data-type='method'><a href="module-Othello.html#~getWinner">getWinner</a></li><li data-type='method'><a href="module-Othello.html#~isGameOver">isGameOver</a></li><li data-type='method'><a href="module-Othello.html#~isInsideBoard">isInsideBoard</a></li><li data-type='method'><a href="module-Othello.html#~isMoveLegal">isMoveLegal</a></li><li data-type='method'><a href="module-Othello.html#~passTurn">passTurn</a></li><li data-type='method'><a href="module-Othello.html#~playMove">playMove</a></li></ul></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Othello.html">Othello</a><ul class='methods'><li data-type='method'><a href="module-Othello.html#~chooseComputerMove">chooseComputerMove</a></li><li data-type='method'><a href="module-Othello.html#~createGame">createGame</a></li><li data-type='method'><a href="module-Othello.html#~getBoard">getBoard</a></li><li data-type='method'><a href="module-Othello.html#~getCurrentPlayer">getCurrentPlayer</a></li><li data-type='method'><a href="module-Othello.html#~getFlippedDiscs">getFlippedDiscs</a></li><li data-type='method'><a href="module-Othello.html#~getOpponent">getOpponent</a></li><li data-type='method'><a href="module-Othello.html#~getScore">getScore</a></li><li data-type='method'><a href="module-Othello.html#~getValidMoves">getValidMoves</a></li><li data-type='method'><a href="module-Othello.html#~getWinner">getWinner</a></li><li data-type='method'><a href="module-Othello.html#~isGameOver">isGameOver</a></li><li data-type='method'><a href="module-Othello.html#~isInsideBoard">isInsideBoard</a></li><li data-type='method'><a href="module-Othello.html#~isMoveLegal">isMoveLegal</a></li><li data-type='method'><a href="module-Othello.html#~passTurn">passTurn</a></li><li data-type='method'><a href="module-Othello.html#~playMove">playMove</a></li></ul></li></ul>
     
 </nav>
 
@@ -59,10 +59,7 @@
         
             
                 <div class="description usertext"><p>Othello game module.</p>
-<p>This module represents the state and rules of a two-player Othello game.
-The game is played on an even-sized square board. Players take turns placing
-discs. A legal move must capture at least one opponent disc in a straight
-line. Captured discs are flipped to the current player.</p></div>
+<p>This module stores the game state and applies the rules of Othello.</p></div>
             
 
             
@@ -75,10 +72,7 @@ line. Captured discs are flipped to the current player.</p></div>
     
     <dt class="tag-description">Description:</dt>
     <dd class="tag-description"><ul class="dummy"><li><p>Othello game module.</p>
-<p>This module represents the state and rules of a two-player Othello game.
-The game is played on an even-sized square board. Players take turns placing
-discs. A legal move must capture at least one opponent disc in a straight
-line. Captured discs are flipped to the current player.</p></li></ul></dd>
+<p>This module stores the game state and applies the rules of Othello.</p></li></ul></dd>
     
 
     
@@ -175,7 +169,7 @@ line. Captured discs are flipped to the current player.</p></li></ul></dd>
 
     
 
-    <h4 class="name" id="~copyBoard"><span class="type-signature type-signature-inner">(inner) </span>copyBoard<span class="signature">(game, player<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Array.&lt;Position>}</span></h4>
+    <h4 class="name" id="~chooseComputerMove"><span class="type-signature type-signature-inner">(inner) </span>chooseComputerMove<span class="signature">(game, player<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Position|null}</span></h4>
 
     
 
@@ -185,13 +179,14 @@ line. Captured discs are flipped to the current player.</p></li></ul></dd>
 <dl class="details">
     
     <dt class="tag-description">Description:</dt>
-    <dd class="tag-description"><ul class="dummy"><li><p>Returns all legal moves for a player.</p></li></ul></dd>
+    <dd class="tag-description"><ul class="dummy"><li><p>Chooses a move for the computer player.</p>
+<p>The computer chooses the move that flips the most discs.</p></li></ul></dd>
     
 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line220">line 220</a>
+        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line311">line 311</a>
     </li></ul></dd>
     
 
@@ -336,7 +331,7 @@ line. Captured discs are flipped to the current player.</p></li></ul></dd>
                 </td>
             
 
-            <td class="description last"><p>The player to find moves for.</p></td>
+            <td class="description last"><p>The computer player.</p></td>
         </tr>
 
     
@@ -362,7 +357,7 @@ line. Captured discs are flipped to the current player.</p></li></ul></dd>
 
         
 <div class="param-desc">
-    <p>The legal move positions.</p>
+    <p>A move, or null if none are available.</p>
 </div>
 
 
@@ -373,7 +368,10 @@ line. Captured discs are flipped to the current player.</p></li></ul></dd>
     </dt>
     <dd>
         
-<span class="param-type">Array.&lt;Position></span>
+<span class="param-type">Position</span>
+|
+
+<span class="param-type">null</span>
 
 
 
@@ -389,7 +387,7 @@ line. Captured discs are flipped to the current player.</p></li></ul></dd>
 
     
 
-    <h4 class="name" id="~createEmptyBoard"><span class="type-signature type-signature-inner">(inner) </span>createEmptyBoard<span class="signature">(size<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {GameState}</span></h4>
+    <h4 class="name" id="~createGame"><span class="type-signature type-signature-inner">(inner) </span>createGame<span class="signature">(size<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {GameState}</span></h4>
 
     
 
@@ -400,14 +398,13 @@ line. Captured discs are flipped to the current player.</p></li></ul></dd>
     
     <dt class="tag-description">Description:</dt>
     <dd class="tag-description"><ul class="dummy"><li><p>Creates a new Othello game.</p>
-<p>The board size must be an even number of at least 4. The default board is
-6 by 6, but the same implementation can also create a standard 8 by 8 board.</p></li></ul></dd>
+<p>The board size must be an even number of at least 4.</p></li></ul></dd>
     
 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line64">line 64</a>
+        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line136">line 136</a>
     </li></ul></dd>
     
 
@@ -516,7 +513,7 @@ line. Captured discs are flipped to the current player.</p></li></ul></dd>
                 </td>
             
 
-            <td class="description last"><p>The width and height of the square board.</p></td>
+            <td class="description last"><p>The width and height of the board.</p></td>
         </tr>
 
     
@@ -536,13 +533,43 @@ line. Captured discs are flipped to the current player.</p></li></ul></dd>
 
 
 
+<h5 class="h5-throws">Throws:</h5>
+
+        
+
+<dl>
+    <dt>
+        <div class="param-desc usertext">
+        <p>If the size is odd or smaller than 4.</p>
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl class="param-type">
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">Error</span>
+
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+
+    
 
 
 <h5 class="h5-returns">Returns:</h5>
 
         
 <div class="param-desc">
-    <p>A new Othello game state.</p>
+    <p>A new game state.</p>
 </div>
 
 
@@ -585,7 +612,7 @@ line. Captured discs are flipped to the current player.</p></li></ul></dd>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line103">line 103</a>
+        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line163">line 163</a>
     </li></ul></dd>
     
 
@@ -743,7 +770,7 @@ line. Captured discs are flipped to the current player.</p></li></ul></dd>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line113">line 113</a>
+        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line173">line 173</a>
     </li></ul></dd>
     
 
@@ -885,7 +912,7 @@ line. Captured discs are flipped to the current player.</p></li></ul></dd>
 
     
 
-    <h4 class="name" id="~getFlippedDiscsInDirection"><span class="type-signature type-signature-inner">(inner) </span>getFlippedDiscsInDirection<span class="signature">(game, row, column, player<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Array.&lt;Position>}</span></h4>
+    <h4 class="name" id="~getFlippedDiscs"><span class="type-signature type-signature-inner">(inner) </span>getFlippedDiscs<span class="signature">(game, row, column, player<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Array.&lt;Position>}</span></h4>
 
     
 
@@ -895,14 +922,13 @@ line. Captured discs are flipped to the current player.</p></li></ul></dd>
 <dl class="details">
     
     <dt class="tag-description">Description:</dt>
-    <dd class="tag-description"><ul class="dummy"><li><p>Returns the opponent discs that would be flipped by a move.</p>
-<p>If the move does not capture any discs, an empty list is returned.</p></li></ul></dd>
+    <dd class="tag-description"><ul class="dummy"><li><p>Returns the opponent discs captured by a move.</p></li></ul></dd>
     
 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line157">line 157</a>
+        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line219">line 219</a>
     </li></ul></dd>
     
 
@@ -1145,7 +1171,7 @@ line. Captured discs are flipped to the current player.</p></li></ul></dd>
 
         
 <div class="param-desc">
-    <p>The positions of discs captured by the move.</p>
+    <p>The captured disc positions.</p>
 </div>
 
 
@@ -1188,7 +1214,7 @@ line. Captured discs are flipped to the current player.</p></li></ul></dd>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line123">line 123</a>
+        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line183">line 183</a>
     </li></ul></dd>
     
 
@@ -1340,13 +1366,13 @@ line. Captured discs are flipped to the current player.</p></li></ul></dd>
 <dl class="details">
     
     <dt class="tag-description">Description:</dt>
-    <dd class="tag-description"><ul class="dummy"><li><p>Counts the number of black and white discs on the board.</p></li></ul></dd>
+    <dd class="tag-description"><ul class="dummy"><li><p>Counts the black and white discs.</p></li></ul></dd>
     
 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line319">line 319</a>
+        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line421">line 421</a>
     </li></ul></dd>
     
 
@@ -1488,6 +1514,220 @@ line. Captured discs are flipped to the current player.</p></li></ul></dd>
 
     
 
+    <h4 class="name" id="~getValidMoves"><span class="type-signature type-signature-inner">(inner) </span>getValidMoves<span class="signature">(game, player<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Array.&lt;Position>}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+    
+    <dt class="tag-description">Description:</dt>
+    <dd class="tag-description"><ul class="dummy"><li><p>Returns all legal moves for a player.</p></li></ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line275">line 275</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5 class="h5-parameters">Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>game</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">GameState</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>The current game state.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>player</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Player</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>game.currentPlayer</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>The player to check.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5 class="h5-returns">Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The legal move positions.</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;Position></span>
+
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
     <h4 class="name" id="~getWinner"><span class="type-signature type-signature-inner">(inner) </span>getWinner<span class="signature">(game)</span><span class="type-signature"> &rarr; {Player|"draw"|null}</span></h4>
 
     
@@ -1498,16 +1738,13 @@ line. Captured discs are flipped to the current player.</p></li></ul></dd>
 <dl class="details">
     
     <dt class="tag-description">Description:</dt>
-    <dd class="tag-description"><ul class="dummy"><li><p>Returns the winner of the game.</p>
-<p>If the game is not over, null is returned. If the game is over, the player
-with more discs wins. If both players have the same number of discs, the
-result is &quot;draw&quot;.</p></li></ul></dd>
+    <dd class="tag-description"><ul class="dummy"><li><p>Returns the winner of the game.</p></li></ul></dd>
     
 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line370">line 370</a>
+        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line466">line 466</a>
     </li></ul></dd>
     
 
@@ -1665,14 +1902,13 @@ result is &quot;draw&quot;.</p></li></ul></dd>
 <dl class="details">
     
     <dt class="tag-description">Description:</dt>
-    <dd class="tag-description"><ul class="dummy"><li><p>Checks whether the game has ended.</p>
-<p>The game is over when neither player has a legal move.</p></li></ul></dd>
+    <dd class="tag-description"><ul class="dummy"><li><p>Checks whether the game has ended.</p></li></ul></dd>
     
 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line353">line 353</a>
+        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line453">line 453</a>
     </li></ul></dd>
     
 
@@ -1787,7 +2023,7 @@ result is &quot;draw&quot;.</p></li></ul></dd>
 
         
 <div class="param-desc">
-    <p>True if the game is over.</p>
+    <p>True if neither player has a legal move.</p>
 </div>
 
 
@@ -1824,13 +2060,13 @@ result is &quot;draw&quot;.</p></li></ul></dd>
 <dl class="details">
     
     <dt class="tag-description">Description:</dt>
-    <dd class="tag-description"><ul class="dummy"><li><p>Checks whether a board coordinate is inside the board.</p></li></ul></dd>
+    <dd class="tag-description"><ul class="dummy"><li><p>Checks whether a position is inside the board.</p></li></ul></dd>
     
 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line139">line 139</a>
+        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line199">line 199</a>
     </li></ul></dd>
     
 
@@ -2030,15 +2266,13 @@ result is &quot;draw&quot;.</p></li></ul></dd>
 <dl class="details">
     
     <dt class="tag-description">Description:</dt>
-    <dd class="tag-description"><ul class="dummy"><li><p>Checks whether a move is legal for a player.</p>
-<p>A legal move must be placed on an empty cell and must flip at least one
-opponent disc.</p></li></ul></dd>
+    <dd class="tag-description"><ul class="dummy"><li><p>Checks whether a move is legal.</p></li></ul></dd>
     
 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line208">line 208</a>
+        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line253">line 253</a>
     </li></ul></dd>
     
 
@@ -2318,14 +2552,13 @@ opponent disc.</p></li></ul></dd>
 <dl class="details">
     
     <dt class="tag-description">Description:</dt>
-    <dd class="tag-description"><ul class="dummy"><li><p>Passes the turn to the opponent.</p>
-<p>This is used when the current player has no legal moves.</p></li></ul></dd>
+    <dd class="tag-description"><ul class="dummy"><li><p>Passes the turn when the current player has no legal moves.</p></li></ul></dd>
     
 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line302">line 302</a>
+        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line404">line 404</a>
     </li></ul></dd>
     
 
@@ -2440,7 +2673,7 @@ opponent disc.</p></li></ul></dd>
 
         
 <div class="param-desc">
-    <p>A new game state with the current player changed.</p>
+    <p>The next game state.</p>
 </div>
 
 
@@ -2478,15 +2711,14 @@ opponent disc.</p></li></ul></dd>
     
     <dt class="tag-description">Description:</dt>
     <dd class="tag-description"><ul class="dummy"><li><p>Plays a move for the current player.</p>
-<p>If the move is legal, this returns a new game state with the new disc placed,
-captured discs flipped, and the turn advanced. If the move is illegal, the
-original game state is returned unchanged.</p></li></ul></dd>
+<p>A legal move returns a new game state. An illegal move returns the original
+game state unchanged.</p></li></ul></dd>
     
 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line259">line 259</a>
+        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line358">line 358</a>
     </li></ul></dd>
     
 
@@ -2688,14 +2920,13 @@ original game state is returned unchanged.</p></li></ul></dd>
 <dl class="details">
     
     <dt class="tag-description">Description:</dt>
-    <dd class="tag-description"><ul class="dummy"><li><p>A cell on the Othello board.</p>
-<p>A cell is either empty or occupied by one player's disc.</p></li></ul></dd>
+    <dd class="tag-description"><ul class="dummy"><li><p>A cell on the board.</p></li></ul></dd>
     
 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line33">line 33</a>
+        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line30">line 30</a>
     </li></ul></dd>
     
 
@@ -2735,8 +2966,7 @@ original game state is returned unchanged.</p></li></ul></dd>
 
 
 <div class="description usertext">
-    <p>A cell on the Othello board.</p>
-<p>A cell is either empty or occupied by one player's disc.</p>
+    <p>A cell on the board.</p>
 </div>
 
 
@@ -2771,13 +3001,13 @@ original game state is returned unchanged.</p></li></ul></dd>
 <dl class="details">
     
     <dt class="tag-description">Description:</dt>
-    <dd class="tag-description"><ul class="dummy"><li><p>The state of an Othello game.</p></li></ul></dd>
+    <dd class="tag-description"><ul class="dummy"><li><p>The current state of a game.</p></li></ul></dd>
     
 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line47">line 47</a>
+        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line42">line 42</a>
     </li></ul></dd>
     
 
@@ -2894,7 +3124,7 @@ original game state is returned unchanged.</p></li></ul></dd>
 
 
 <div class="description usertext">
-    <p>The state of an Othello game.</p>
+    <p>The current state of a game.</p>
 </div>
 
 
@@ -2932,7 +3162,7 @@ original game state is returned unchanged.</p></li></ul></dd>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line27">line 27</a>
+        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line24">line 24</a>
     </li></ul></dd>
     
 
@@ -3007,13 +3237,13 @@ original game state is returned unchanged.</p></li></ul></dd>
 <dl class="details">
     
     <dt class="tag-description">Description:</dt>
-    <dd class="tag-description"><ul class="dummy"><li><p>A coordinate on the board.</p></li></ul></dd>
+    <dd class="tag-description"><ul class="dummy"><li><p>A row and column position.</p></li></ul></dd>
     
 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line41">line 41</a>
+        <a href="othello.js.html">othello.js</a>, <a href="othello.js.html#line36">line 36</a>
     </li></ul></dd>
     
 
@@ -3053,7 +3283,7 @@ original game state is returned unchanged.</p></li></ul></dd>
 
 
 <div class="description usertext">
-    <p>A coordinate on the board.</p>
+    <p>A row and column position.</p>
 </div>
 
 
@@ -3092,7 +3322,7 @@ original game state is returned unchanged.</p></li></ul></dd>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> on Mon Jun 08 2026 20:03:06 GMT+0100 (英国夏令时间) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> on Thu Jun 25 2026 14:28:46 GMT+0100 (英国夏令时间) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>

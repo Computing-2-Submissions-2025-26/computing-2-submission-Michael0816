@@ -14,12 +14,13 @@ import {
     playMove
 } from "./othello.js";
 
+const COMPUTER_PLAYER = WHITE;
+
 let boardSize = 6;
 let game = createGame(boardSize);
 let gameMode = "pvp";
 let computerTurnPending = false;
-
-const COMPUTER_PLAYER = WHITE;
+let computerTurnTimer = null;
 
 let recentlyFlippedDiscs = [];
 let recentlyPlacedDisc = null;
@@ -33,7 +34,6 @@ const size6Button = document.querySelector("#size-6-button");
 const size8Button = document.querySelector("#size-8-button");
 const messageElement = document.querySelector("#message");
 const resetButton = document.querySelector("#reset-button");
-
 const pvpButton = document.querySelector("#pvp-button");
 const pvcButton = document.querySelector("#pvc-button");
 
@@ -82,13 +82,39 @@ function updateBoardStyle() {
 }
 
 function updateSizeButtons() {
-    size6Button.classList.toggle("active-size", boardSize === 6);
-    size8Button.classList.toggle("active-size", boardSize === 8);
+    const size6Selected = boardSize === 6;
+    const size8Selected = boardSize === 8;
+
+    size6Button.classList.toggle("active-size", size6Selected);
+    size8Button.classList.toggle("active-size", size8Selected);
+
+    size6Button.setAttribute(
+        "aria-pressed",
+        String(size6Selected)
+    );
+
+    size8Button.setAttribute(
+        "aria-pressed",
+        String(size8Selected)
+    );
 }
 
 function updateModeButtons() {
-    pvpButton.classList.toggle("active-mode", gameMode === "pvp");
-    pvcButton.classList.toggle("active-mode", gameMode === "pvc");
+    const pvpSelected = gameMode === "pvp";
+    const pvcSelected = gameMode === "pvc";
+
+    pvpButton.classList.toggle("active-mode", pvpSelected);
+    pvcButton.classList.toggle("active-mode", pvcSelected);
+
+    pvpButton.setAttribute(
+        "aria-pressed",
+        String(pvpSelected)
+    );
+
+    pvcButton.setAttribute(
+        "aria-pressed",
+        String(pvcSelected)
+    );
 }
 
 function isComputerTurn() {
@@ -117,9 +143,20 @@ function updateStatus() {
         resultBannerElement.textContent = `${formatPlayer(winner)} wins!`;
         resultBannerElement.classList.add("show-result");
     } else {
-        statusElement.textContent = `Current player: ${formatPlayer(game.currentPlayer)}`;
+        statusElement.textContent =
+            `Current player: ${formatPlayer(game.currentPlayer)}`;
+
         resultBannerElement.textContent = "";
     }
+}
+
+function cancelComputerTurn() {
+    if (computerTurnTimer !== null) {
+        clearTimeout(computerTurnTimer);
+        computerTurnTimer = null;
+    }
+
+    computerTurnPending = false;
 }
 
 function scheduleComputerTurn() {
@@ -129,61 +166,113 @@ function scheduleComputerTurn() {
 
     computerTurnPending = true;
     messageElement.textContent = "Computer is thinking...";
+    render();
 
-    setTimeout(function () {
-        const move = chooseComputerMove(game, COMPUTER_PLAYER);
+    computerTurnTimer = setTimeout(function () {
+        computerTurnTimer = null;
+
+        if (!isComputerTurn()) {
+            computerTurnPending = false;
+            return;
+        }
+
+        const move = chooseComputerMove(
+            game,
+            COMPUTER_PLAYER
+        );
 
         if (move === null) {
             recentlyFlippedDiscs = [];
             recentlyPlacedDisc = null;
             game = passTurn(game);
 
-            messageElement.textContent = "Computer has no legal moves. Turn passed.";
+            messageElement.textContent =
+                "Computer has no legal moves. Turn passed.";
         } else {
-            recentlyFlippedDiscs = getFlippedDiscs(game, move[0], move[1], COMPUTER_PLAYER);
-            recentlyPlacedDisc = [move[0], move[1]];
+            recentlyFlippedDiscs = getFlippedDiscs(
+                game,
+                move[0],
+                move[1],
+                COMPUTER_PLAYER
+            );
 
-            game = playMove(game, move[0], move[1]);
-            messageElement.textContent = "Computer played a move.";
+            recentlyPlacedDisc = [
+                move[0],
+                move[1]
+            ];
+
+            game = playMove(
+                game,
+                move[0],
+                move[1]
+            );
+
+            messageElement.textContent =
+                "Computer played a move.";
         }
 
         computerTurnPending = false;
+
         render();
         scheduleComputerTurn();
     }, 500);
 }
 
-
 function handleCellClick(row, column) {
     if (isGameOver(game)) {
-        messageElement.textContent = "The game is already over.";
+        messageElement.textContent =
+            "The game is already over.";
+
         return;
     }
 
-    if (isComputerTurn()) {
-        messageElement.textContent = "Please wait for the computer move.";
+    if (isComputerTurn() || computerTurnPending) {
+        messageElement.textContent =
+            "Please wait for the computer move.";
+
         return;
     }
 
-    if (!isMoveLegal(game, row, column, game.currentPlayer)) {
-        messageElement.textContent = "That move is not legal.";
+    if (!isMoveLegal(
+        game,
+        row,
+        column,
+        game.currentPlayer
+    )) {
+        messageElement.textContent =
+            "That move is not legal.";
+
         return;
     }
 
     const playerBeforeMove = game.currentPlayer;
     const opponent = getOpponent(playerBeforeMove);
 
-    recentlyFlippedDiscs = getFlippedDiscs(game, row, column, game.currentPlayer);
-    recentlyPlacedDisc = [row, column];
+    recentlyFlippedDiscs = getFlippedDiscs(
+        game,
+        row,
+        column,
+        game.currentPlayer
+    );
 
-    game = playMove(game, row, column);
+    recentlyPlacedDisc = [
+        row,
+        column
+    ];
+
+    game = playMove(
+        game,
+        row,
+        column
+    );
 
     if (
         !isGameOver(game) &&
         game.currentPlayer === playerBeforeMove &&
         getValidMoves(game, opponent).length === 0
     ) {
-        messageElement.textContent = `${formatPlayer(opponent)} has no legal moves. Turn passed.`;
+        messageElement.textContent =
+            `${formatPlayer(opponent)} has no legal moves. Turn passed.`;
     } else {
         messageElement.textContent = "";
     }
@@ -195,37 +284,55 @@ function handleCellClick(row, column) {
 function createCell(row, column) {
     const cellButton = document.createElement("button");
     const value = game.board[row][column];
-    const isLegal = isMoveLegal(game, row, column, game.currentPlayer);
+
+    const isLegal = (
+        !isComputerTurn() &&
+        !computerTurnPending &&
+        isMoveLegal(
+            game,
+            row,
+            column,
+            game.currentPlayer
+        )
+    );
 
     cellButton.classList.add("cell");
     cellButton.type = "button";
+    cellButton.tabIndex = isLegal ? 0 : -1;
 
     if (value === BLACK) {
         cellButton.classList.add("black-disc");
-        cellButton.textContent = "";
     } else if (value === WHITE) {
         cellButton.classList.add("white-disc");
-        cellButton.textContent = "";
     } else if (isLegal) {
         cellButton.classList.add("valid-move");
-        cellButton.textContent = "";
-    } else {
-        cellButton.textContent = "";
     }
 
-    if (includesPosition(recentlyFlippedDiscs, row, column)) {
+    if (includesPosition(
+        recentlyFlippedDiscs,
+        row,
+        column
+    )) {
         cellButton.classList.add("recently-flipped");
     }
 
-    if (isSamePosition(recentlyPlacedDisc, [row, column])) {
+    if (isSamePosition(
+        recentlyPlacedDisc,
+        [row, column]
+    )) {
         cellButton.classList.add("recently-placed");
     }
 
     cellButton.setAttribute(
         "aria-label",
-        `Row ${row + 1}, column ${column + 1}, ${formatCellValue(value)}${
-            isLegal ? ", legal move" : ""
-        }`
+        `Row ${row + 1}, column ${column + 1}, ` +
+        `${formatCellValue(value)}` +
+        `${isLegal ? ", legal move" : ""}`
+    );
+
+    cellButton.setAttribute(
+        "aria-disabled",
+        String(!isLegal)
     );
 
     cellButton.addEventListener("click", function () {
@@ -239,11 +346,14 @@ function renderBoard() {
     const size = game.board.length;
 
     boardElement.replaceChildren();
-    boardElement.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+    boardElement.style.gridTemplateColumns =
+        `repeat(${size}, 1fr)`;
 
     game.board.forEach(function (rowValues, row) {
         rowValues.forEach(function (_cellValue, column) {
-            boardElement.appendChild(createCell(row, column));
+            boardElement.appendChild(
+                createCell(row, column)
+            );
         });
     });
 }
@@ -257,10 +367,13 @@ function render() {
 }
 
 function restartGame(message) {
+    cancelComputerTurn();
+
     game = createGame(boardSize);
     recentlyFlippedDiscs = [];
     recentlyPlacedDisc = null;
     messageElement.textContent = message;
+
     render();
     scheduleComputerTurn();
 }

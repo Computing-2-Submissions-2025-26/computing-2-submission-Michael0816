@@ -15,7 +15,7 @@ import {
     getScore,
     isGameOver,
     getWinner,
-    chooseComputerMove,
+    chooseComputerMove
 } from "../othello.js";
 
 describe("createGame", function () {
@@ -55,6 +55,18 @@ describe("createGame", function () {
         const game = createGame();
 
         assert.strictEqual(getCurrentPlayer(game), BLACK);
+    });
+
+    it("rejects an odd board size", function () {
+        assert.throws(function () {
+            createGame(7);
+        });
+    });
+
+    it("rejects a board smaller than 4", function () {
+        assert.throws(function () {
+            createGame(2);
+        });
     });
 });
 
@@ -113,12 +125,21 @@ describe("getFlippedDiscs", function () {
         );
     });
 
+    it("returns an empty list for a position outside the board", function () {
+        const game = createGame();
+
+        assert.deepStrictEqual(
+            getFlippedDiscs(game, -1, 2, BLACK),
+            []
+        );
+    });
+
     it("returns an empty list when a line is not closed by the current player", function () {
         const game = {
             board: [
                 [null, null, null, null, null, null],
                 [null, null, null, null, null, null],
-                [null, "white", "white", null, null, null],
+                [null, WHITE, WHITE, null, null, null],
                 [null, null, null, null, null, null],
                 [null, null, null, null, null, null],
                 [null, null, null, null, null, null]
@@ -129,6 +150,51 @@ describe("getFlippedDiscs", function () {
         assert.deepStrictEqual(
             getFlippedDiscs(game, 2, 0, BLACK),
             []
+        );
+    });
+
+    it("flips discs in more than one direction", function () {
+        const game = {
+            board: [
+                [BLACK, null, BLACK, null, null, null],
+                [null, WHITE, WHITE, null, null, null],
+                [BLACK, WHITE, null, null, null, null],
+                [null, null, null, null, null, null],
+                [null, null, null, null, null, null],
+                [null, null, null, null, null, null]
+            ],
+            currentPlayer: BLACK
+        };
+
+        assert.deepStrictEqual(
+            getFlippedDiscs(game, 2, 2, BLACK),
+            [
+                [1, 1],
+                [1, 2],
+                [2, 1]
+            ]
+        );
+    });
+
+    it("flips discs along the edge of the board", function () {
+        const game = {
+            board: [
+                [null, WHITE, WHITE, BLACK, null, null],
+                [null, null, null, null, null, null],
+                [null, null, null, null, null, null],
+                [null, null, null, null, null, null],
+                [null, null, null, null, null, null],
+                [null, null, null, null, null, null]
+            ],
+            currentPlayer: BLACK
+        };
+
+        assert.deepStrictEqual(
+            getFlippedDiscs(game, 0, 0, BLACK),
+            [
+                [0, 1],
+                [0, 2]
+            ]
         );
     });
 });
@@ -211,7 +277,7 @@ describe("playMove", function () {
         assert.strictEqual(nextGame.currentPlayer, WHITE);
     });
 
-    it("does not mutate the original game state", function () {
+    it("does not change the original game state", function () {
         const game = createGame();
         const nextGame = playMove(game, 1, 2);
 
@@ -226,6 +292,27 @@ describe("playMove", function () {
         const nextGame = playMove(game, 0, 0);
 
         assert.strictEqual(nextGame, game);
+    });
+
+    it("flips discs in several directions after one move", function () {
+        const game = {
+            board: [
+                [BLACK, null, BLACK, null, null, null],
+                [null, WHITE, WHITE, null, null, null],
+                [BLACK, WHITE, null, null, null, null],
+                [null, null, null, null, null, null],
+                [null, null, null, null, null, null],
+                [null, null, null, null, null, null]
+            ],
+            currentPlayer: BLACK
+        };
+
+        const nextGame = playMove(game, 2, 2);
+
+        assert.strictEqual(nextGame.board[1][1], BLACK);
+        assert.strictEqual(nextGame.board[1][2], BLACK);
+        assert.strictEqual(nextGame.board[2][1], BLACK);
+        assert.strictEqual(nextGame.board[2][2], BLACK);
     });
 });
 
@@ -308,7 +395,7 @@ describe("getWinner", function () {
         assert.strictEqual(getWinner(game), null);
     });
 
-    it("returns black when the game is over and black has more discs", function () {
+    it("returns black when black has more discs", function () {
         const game = {
             board: [
                 [BLACK, BLACK, BLACK, BLACK, BLACK, BLACK],
@@ -324,7 +411,23 @@ describe("getWinner", function () {
         assert.strictEqual(getWinner(game), BLACK);
     });
 
-    it("returns draw when the game is over and both players have the same score", function () {
+    it("returns white when white has more discs", function () {
+        const game = {
+            board: [
+                [WHITE, WHITE, WHITE, WHITE, WHITE, WHITE],
+                [WHITE, WHITE, WHITE, WHITE, WHITE, WHITE],
+                [WHITE, WHITE, WHITE, WHITE, WHITE, WHITE],
+                [WHITE, WHITE, WHITE, WHITE, WHITE, WHITE],
+                [WHITE, WHITE, WHITE, WHITE, WHITE, WHITE],
+                [WHITE, WHITE, WHITE, WHITE, WHITE, BLACK]
+            ],
+            currentPlayer: WHITE
+        };
+
+        assert.strictEqual(getWinner(game), WHITE);
+    });
+
+    it("returns draw when both players have the same score", function () {
         const game = {
             board: [
                 [BLACK, WHITE, BLACK, WHITE, BLACK, WHITE],
@@ -346,7 +449,10 @@ describe("chooseComputerMove", function () {
         const game = createGame();
         const move = chooseComputerMove(game, BLACK);
 
-        assert.strictEqual(isMoveLegal(game, move[0], move[1], BLACK), true);
+        assert.strictEqual(
+            isMoveLegal(game, move[0], move[1], BLACK),
+            true
+        );
     });
 
     it("chooses the move that flips the most discs", function () {
@@ -362,7 +468,10 @@ describe("chooseComputerMove", function () {
             currentPlayer: BLACK
         };
 
-        assert.deepStrictEqual(chooseComputerMove(game, BLACK), [2, 0]);
+        assert.deepStrictEqual(
+            chooseComputerMove(game, BLACK),
+            [2, 0]
+        );
     });
 
     it("returns null when the computer player has no legal move", function () {
@@ -378,6 +487,9 @@ describe("chooseComputerMove", function () {
             currentPlayer: WHITE
         };
 
-        assert.strictEqual(chooseComputerMove(game, WHITE), null);
+        assert.strictEqual(
+            chooseComputerMove(game, WHITE),
+            null
+        );
     });
 });

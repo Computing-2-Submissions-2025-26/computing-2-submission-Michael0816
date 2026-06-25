@@ -2,15 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>6 by 6 Othello</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Othello Board Game</title>
     <link rel="stylesheet" href="default.css">
+    <link rel="icon" type="image/png" href="./assets/Icon.png">
 </head>
+
 <body>
     <div class="page">
         <header class="hero">
-            <h1>6×6 Othello</h1>
+            <h1>Othello</h1>
             <p>
-                A compact two-player strategy board game implemented with a pure JavaScript game module.
+                Play against another player or the computer on a 6×6 or 8×8 board.
             </p>
         </header>
 
@@ -19,51 +22,115 @@
                 <h2 id="game-heading">Game board</h2>
 
                 <div class="control-card">
-                    <p id="status" class="status">Current player: Black</p>
-                    <p id="message" class="message" aria-live="polite"></p>
+                    <p id="status" class="status">
+                        Current player: Black
+                    </p>
 
-                    <div class="score-board" aria-label="Current score">
+                    <p
+                        id="message"
+                        class="message"
+                        aria-live="polite"
+                    ></p>
+
+                    <div
+                        class="score-board"
+                        aria-label="Current score"
+                    >
                         <div class="score-chip black-score-chip">
                             <span class="score-label">Black</span>
-                            <span id="black-score" class="score-number">2</span>
+                            <span
+                                id="black-score"
+                                class="score-number"
+                            >2</span>
                         </div>
 
                         <div class="score-chip white-score-chip">
                             <span class="score-label">White</span>
-                            <span id="white-score" class="score-number">2</span>
+                            <span
+                                id="white-score"
+                                class="score-number"
+                            >2</span>
                         </div>
                     </div>
 
-                    <div class="mode-controls" aria-label="Game mode selection">
-                        <button id="pvp-button" class="mode-button active-mode pvp-mode-button" type="button">
+                    <div
+                        class="mode-controls"
+                        aria-label="Game mode selection"
+                    >
+                        <button
+                            id="pvp-button"
+                            class="mode-button active-mode pvp-mode-button"
+                            type="button"
+                            aria-pressed="true"
+                        >
                             <span class="mode-title">PvP</span>
-                            <span class="mode-subtitle">Player vs Player</span>
+                            <span class="mode-subtitle">
+                                Player vs Player
+                            </span>
                         </button>
 
-                        <button id="pvc-button" class="mode-button pvc-mode-button" type="button">
+                        <button
+                            id="pvc-button"
+                            class="mode-button pvc-mode-button"
+                            type="button"
+                            aria-pressed="false"
+                        >
                             <span class="mode-title">PvC</span>
-                            <span class="mode-subtitle">Player vs Computer</span>
+                            <span class="mode-subtitle">
+                                Player vs Computer
+                            </span>
                         </button>
                     </div>
 
-                    <div class="size-controls" aria-label="Board size selection">
-                        <button id="size-6-button" class="size-button active-size" type="button">6×6</button>
-                        <button id="size-8-button" class="size-button" type="button">8×8</button>
+                    <div
+                        class="size-controls"
+                        aria-label="Board size selection"
+                    >
+                        <button
+                            id="size-6-button"
+                            class="size-button active-size"
+                            type="button"
+                            aria-pressed="true"
+                        >
+                            6×6
+                        </button>
+
+                        <button
+                            id="size-8-button"
+                            class="size-button"
+                            type="button"
+                            aria-pressed="false"
+                        >
+                            8×8
+                        </button>
                     </div>
                 </div>
 
-                <div id="result-banner" class="result-banner" aria-live="polite"></div>
+                <div
+                    id="result-banner"
+                    class="result-banner"
+                    aria-live="polite"
+                ></div>
 
-                <div id="board" class="board" aria-label="Othello board"></div>
+                <div
+                    id="board"
+                    class="board"
+                    aria-label="Othello board"
+                ></div>
 
-                <button id="reset-button" type="button">Reset game</button>
+                <button id="reset-button" type="button">
+                    Reset game
+                </button>
             </section>
 
             <aside class="rules-card">
                 <section class="tutorial-card">
                     <h2>Quick demo</h2>
 
-                    <div class="tutorial-demo" aria-label="Animated Othello move demonstration">
+                    <div
+                        class="tutorial-demo"
+                        aria-label="Animated Othello move demonstration"
+                    >
                         <div class="demo-board">
                             <span class="demo-cell"></span>
                             <span class="demo-cell"></span>
@@ -87,21 +154,38 @@
                         </div>
 
                         <div class="demo-caption">
-                            <p><strong>1.</strong> Pick a highlighted move.</p>
-                            <p><strong>2.</strong> Trap a white disc between two black discs.</p>
-                            <p><strong>3.</strong> Captured discs flip to your colour.</p>
+                            <p>
+                                <strong>1.</strong>
+                                Pick a highlighted move.
+                            </p>
+
+                            <p>
+                                <strong>2.</strong>
+                                Trap a white disc between two black discs.
+                            </p>
+
+                            <p>
+                                <strong>3.</strong>
+                                Captured discs flip to your colour.
+                            </p>
                         </div>
                     </div>
                 </section>
+
                 <h2>Rules</h2>
+
                 <p>
-                    Players take turns placing black and white discs. A legal move must
-                    capture at least one opponent disc in a straight line.
+                    Players take turns placing black and white discs.
+                    A legal move must capture at least one opponent disc
+                    in a straight line.
                 </p>
+
                 <p>
-                    Captured discs are flipped to the current player. The game ends when
-                    neither player has a legal move. The player with more discs wins.
+                    Captured discs are flipped to the current player.
+                    The game ends when neither player has a legal move.
+                    The player with more discs wins.
                 </p>
+
                 <p>
                     Highlighted cells show legal moves for the current player.
                 </p>
